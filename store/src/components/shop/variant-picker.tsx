@@ -30,7 +30,7 @@ export function VariantPicker({ variants }: { variants: Variant[] }) {
   const [qty, setQty] = useState(1);
   const [isPending, startTransition] = useTransition();
   const [status, setStatus] = useState<"idle" | "added" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   const selected = variants.find((v) => v.id === selectedId) ?? variants[0];
   const nameById = new Map(variants.map((v) => [v.id, v.name]));
@@ -48,21 +48,29 @@ export function VariantPicker({ variants }: { variants: Variant[] }) {
     setSelectedId(value);
     setQty(1);
     setStatus("idle");
+    setMessage(null);
   }
 
   function handleAddToCart() {
     setStatus("idle");
-    setErrorMessage(null);
+    setMessage(null);
     startTransition(async () => {
       try {
-        await addToCart({ variantId: selected.id, qty });
-        setStatus("added");
-        router.refresh();
-      } catch (err) {
+        const result = await addToCart({ variantId: selected.id, qty });
+        if (result.ok) {
+          setStatus("added");
+          setMessage(result.notice ?? null);
+          router.refresh();
+        } else {
+          setStatus("error");
+          setMessage(result.error);
+          // Stock may have moved under us — re-read so the badge tells the truth.
+          router.refresh();
+        }
+      } catch {
+        // Only reached if the action call itself fails (network/transport).
         setStatus("error");
-        setErrorMessage(
-          err instanceof Error ? err.message : "Couldn't add this to your cart."
-        );
+        setMessage("Couldn't reach the store. Check your connection.");
       }
     });
   }
@@ -141,8 +149,16 @@ export function VariantPicker({ variants }: { variants: Variant[] }) {
         </div>
       ) : null}
 
-      {status === "error" && errorMessage ? (
-        <p className="mt-3 text-sm text-destructive">{errorMessage}</p>
+      {message ? (
+        <p
+          className={
+            status === "error"
+              ? "mt-3 text-sm text-destructive"
+              : "mt-3 text-sm text-muted-foreground"
+          }
+        >
+          {message}
+        </p>
       ) : null}
     </div>
   );

@@ -30,29 +30,40 @@ export function CartItemRow({
 }: CartItemRowProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [isError, setIsError] = useState(false);
   const maxQty = Math.min(20, stock);
 
   function changeQty(next: number) {
-    setError(null);
+    setMessage(null);
+    setIsError(false);
     startTransition(async () => {
       try {
-        await updateCartItem({ itemId, qty: next });
+        const result = await updateCartItem({ itemId, qty: next });
+        if (!result.ok) setIsError(true);
+        setMessage(result.ok ? (result.notice ?? null) : result.error);
         router.refresh();
       } catch {
-        setError("Couldn't update quantity.");
+        setIsError(true);
+        setMessage("Couldn't reach the store. Check your connection.");
       }
     });
   }
 
   function remove() {
-    setError(null);
+    setMessage(null);
+    setIsError(false);
     startTransition(async () => {
       try {
-        await removeCartItem({ itemId });
+        const result = await removeCartItem({ itemId });
+        if (!result.ok) {
+          setIsError(true);
+          setMessage(result.error);
+        }
         router.refresh();
       } catch {
-        setError("Couldn't remove this item.");
+        setIsError(true);
+        setMessage("Couldn't reach the store. Check your connection.");
       }
     });
   }
@@ -118,7 +129,15 @@ export function CartItemRow({
           </button>
         </div>
 
-        {error ? <p className="text-xs text-destructive">{error}</p> : null}
+        {message ? (
+          <p
+            className={
+              isError ? "text-xs text-destructive" : "text-xs text-muted-foreground"
+            }
+          >
+            {message}
+          </p>
+        ) : null}
       </div>
     </div>
   );
