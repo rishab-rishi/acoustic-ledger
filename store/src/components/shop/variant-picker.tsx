@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { addToCart } from "@/actions/cart";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -19,12 +22,19 @@ type Variant = {
 };
 
 export function VariantPicker({ variants }: { variants: Variant[] }) {
+  const router = useRouter();
   const firstInStock = variants.find((v) => v.stock > 0);
   const [selectedId, setSelectedId] = useState(
     (firstInStock ?? variants[0]).id
   );
+  const [qty, setQty] = useState(1);
+  const [isPending, startTransition] = useTransition();
+  const [status, setStatus] = useState<"idle" | "added" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const selected = variants.find((v) => v.id === selectedId) ?? variants[0];
   const nameById = new Map(variants.map((v) => [v.id, v.name]));
+  const maxQty = Math.min(20, selected.stock);
 
   const stockLabel =
     selected.stock === 0
@@ -32,6 +42,30 @@ export function VariantPicker({ variants }: { variants: Variant[] }) {
       : selected.stock <= 5
         ? `Low stock — ${selected.stock} left`
         : "In stock";
+
+  function handleSelectVariant(value: string | null) {
+    if (!value) return;
+    setSelectedId(value);
+    setQty(1);
+    setStatus("idle");
+  }
+
+  function handleAddToCart() {
+    setStatus("idle");
+    setErrorMessage(null);
+    startTransition(async () => {
+      try {
+        await addToCart({ variantId: selected.id, qty });
+        setStatus("added");
+        router.refresh();
+      } catch (err) {
+        setStatus("error");
+        setErrorMessage(
+          err instanceof Error ? err.message : "Couldn't add this to your cart."
+        );
+      }
+    });
+  }
 
   return (
     <div>
@@ -44,12 +78,7 @@ export function VariantPicker({ variants }: { variants: Variant[] }) {
           <label className="text-xs tracking-wide text-muted-foreground uppercase">
             Variant
           </label>
-          <Select
-            value={selectedId}
-            onValueChange={(value) => {
-              if (value) setSelectedId(value);
-            }}
-          >
+          <Select value={selectedId} onValueChange={handleSelectVariant}>
             <SelectTrigger className="mt-1.5 w-full">
               <SelectValue>
                 {(value: string | null) =>
@@ -75,6 +104,46 @@ export function VariantPicker({ variants }: { variants: Variant[] }) {
       >
         {stockLabel}
       </Badge>
+
+      {selected.stock > 0 ? (
+        <div className="mt-6 flex items-center gap-3">
+          <div className="flex items-center border border-border">
+            <button
+              type="button"
+              aria-label="Decrease quantity"
+              className="flex size-9 items-center justify-center text-lg text-foreground/70 transition-colors hover:text-foreground disabled:opacity-40"
+              disabled={qty <= 1}
+              onClick={() => setQty((q) => Math.max(1, q - 1))}
+            >
+              −
+            </button>
+            <span className="w-8 text-center font-mono text-sm tabular-nums">
+              {qty}
+            </span>
+            <button
+              type="button"
+              aria-label="Increase quantity"
+              className="flex size-9 items-center justify-center text-lg text-foreground/70 transition-colors hover:text-foreground disabled:opacity-40"
+              disabled={qty >= maxQty}
+              onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
+            >
+              +
+            </button>
+          </div>
+
+          <Button
+            className="flex-1"
+            disabled={isPending}
+            onClick={handleAddToCart}
+          >
+            {isPending ? "Adding…" : status === "added" ? "Added ✓" : "Add to Cart"}
+          </Button>
+        </div>
+      ) : null}
+
+      {status === "error" && errorMessage ? (
+        <p className="mt-3 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
     </div>
   );
 }

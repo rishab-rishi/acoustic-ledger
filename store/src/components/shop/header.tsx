@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { ShoppingBag, User } from "lucide-react";
 import { getCategories } from "@/db/queries";
+import { getCartItemCount } from "@/lib/cart";
 
 export async function Header() {
-  const categories = await getCategories();
+  const [categories, cartCount] = await Promise.all([
+    getCategories(),
+    getCartItemCount(),
+  ]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -49,6 +53,11 @@ export async function Header() {
             className="relative text-foreground/70 transition-colors hover:text-accent"
           >
             <ShoppingBag className="size-5" />
+            {cartCount > 0 ? (
+              <span className="absolute -top-2 -right-2 flex size-4 items-center justify-center rounded-full bg-accent text-[10px] font-medium text-accent-foreground">
+                {cartCount > 9 ? "9+" : cartCount}
+              </span>
+            ) : null}
           </Link>
         </div>
       </div>
