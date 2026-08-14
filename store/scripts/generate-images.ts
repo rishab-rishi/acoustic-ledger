@@ -6,7 +6,7 @@
  * photography — this keeps the look consistent across the whole catalog
  * and avoids depending on a third-party image host at demo time.
  */
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 

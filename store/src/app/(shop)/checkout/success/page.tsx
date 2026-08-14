@@ -110,13 +110,11 @@ export default async function CheckoutSuccessPage({
       </div>
 
       <div className="mt-8 flex gap-3">
-        <Link href="/products">
-          <Button variant="outline">Keep shopping</Button>
-        </Link>
+        <Button variant="outline" render={<Link href="/products" />}>
+          Keep shopping
+        </Button>
         {session?.user ? (
-          <Link href="/orders">
-            <Button>View order history</Button>
-          </Link>
+          <Button render={<Link href="/orders" />}>View order history</Button>
         ) : null}
       </div>
     </div>

@@ -44,9 +44,9 @@ export default async function OrdersPage() {
         <p className="mt-2 text-sm text-muted-foreground">
           Once you place an order it will show up here.
         </p>
-        <Link href="/products">
-          <Button className="mt-8">Shop All Products</Button>
-        </Link>
+        <Button className="mt-8" render={<Link href="/products" />}>
+          Shop All Products
+        </Button>
       </div>
     );
   }

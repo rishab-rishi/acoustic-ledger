@@ -246,11 +246,14 @@ export default async function ProductsPage({
             </div>
           ) : null}
 
-          <Link href="/products">
-            <Button variant="outline" size="sm" className="mt-8">
-              Clear filters
-            </Button>
-          </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-8"
+            render={<Link href="/products" />}
+          >
+            Clear filters
+          </Button>
         </div>
       )}
     </div>

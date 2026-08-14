@@ -39,12 +39,10 @@ export default async function AdminProductsPage({
     <div className="mx-auto max-w-6xl px-6 py-10">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-medium tracking-tight">Products</h1>
-        <Link href="/admin/products/new">
-          <Button size="sm">
-            <Plus className="size-4" />
-            New product
-          </Button>
-        </Link>
+        <Button size="sm" render={<Link href="/admin/products/new" />}>
+          <Plus className="size-4" />
+          New product
+        </Button>
       </div>
 
       <div className="mb-6 flex flex-wrap items-center gap-3">

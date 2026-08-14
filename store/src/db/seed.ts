@@ -669,7 +669,7 @@ async function main() {
   const adminPasswordHash = await bcrypt.hash("admin123", 10);
   const customerPasswordHash = await bcrypt.hash("customer123", 10);
 
-  const [admin] = await db
+  await db
     .insert(users)
     .values({
       email: "admin@demo.test",

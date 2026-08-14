@@ -25,9 +25,9 @@ export default async function CartPage() {
         <p className="mt-2 text-sm text-muted-foreground">
           Browse the catalog and find something worth listening to.
         </p>
-        <Link href="/products">
-          <Button className="mt-8">Shop All Products</Button>
-        </Link>
+        <Button className="mt-8" render={<Link href="/products" />}>
+          Shop All Products
+        </Button>
       </div>
     );
   }
