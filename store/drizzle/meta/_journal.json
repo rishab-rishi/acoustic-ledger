@@ -15,6 +15,20 @@
       "when": 1786712471905,
       "tag": "0001_colorful_firelord",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786728274686,
+      "tag": "0002_drop_stripe_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786728296070,
+      "tag": "0003_add_paypal_columns",
+      "breakpoints": true
     }
   ]
 }

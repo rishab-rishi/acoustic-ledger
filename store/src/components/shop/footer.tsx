@@ -62,7 +62,7 @@ export async function Footer() {
 
       <div className="border-t border-border px-6 py-4">
         <p className="mx-auto max-w-6xl text-xs text-muted-foreground">
-          Demo store. Payments run in Stripe test mode — no real charges.
+          Demo store. Payments run in the PayPal sandbox — no real charges.
         </p>
       </div>
     </footer>

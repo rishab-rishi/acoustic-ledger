@@ -637,6 +637,22 @@ const CUSTOMER_ORDERS: Array<{
   },
 ];
 
+/**
+ * Historical seed orders predate this database, so they carry plausible
+ * PayPal-shaped ids (17-char uppercase alphanumeric) rather than obvious
+ * placeholders. Deterministic, so re-seeding is stable.
+ */
+function fakePaypalId(seq: number, salt: string): string {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
+  let x = seq * 2654435761 + salt.charCodeAt(0) * 40503;
+  let out = "";
+  for (let i = 0; i < 17; i++) {
+    x = (x * 1103515245 + 12345) & 0x7fffffff;
+    out += alphabet[x % alphabet.length];
+  }
+  return out;
+}
+
 async function main() {
   console.log("Clearing existing data...");
   await db.delete(orderItems);
@@ -777,10 +793,10 @@ async function main() {
         subtotalCents,
         shippingCents,
         totalCents,
-        stripeSessionId: `cs_test_seed_${String(orderCounter).padStart(5, "0")}`,
-        stripePaymentIntentId:
+        paypalOrderId: fakePaypalId(orderCounter, "order"),
+        paypalCaptureId:
           o.status === "paid" || o.status === "fulfilled"
-            ? `pi_test_seed_${String(orderCounter).padStart(5, "0")}`
+            ? fakePaypalId(orderCounter, "capture")
             : null,
         shippingAddress: o.guest
           ? {

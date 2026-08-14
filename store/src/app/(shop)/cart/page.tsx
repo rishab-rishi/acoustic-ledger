@@ -1,22 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { auth } from "@/auth";
 import { CartItemRow } from "@/components/shop/cart-item-row";
+import { CheckoutPanel } from "@/components/shop/checkout-panel";
+import { Button } from "@/components/ui/button";
 import { getCart } from "@/lib/cart";
-import { formatCents } from "@/lib/format";
+import { shippingForSubtotal } from "@/lib/paypal";
 
 export const metadata: Metadata = {
   title: "Cart",
 };
 
 export default async function CartPage() {
-  const cart = await getCart();
+  const [cart, session] = await Promise.all([getCart(), auth()]);
   const items = cart?.items ?? [];
 
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-6xl px-6 py-24 text-center">
-        <h1 className="text-2xl font-medium tracking-tight">Your cart is empty</h1>
+        <h1 className="text-2xl font-medium tracking-tight">
+          Your cart is empty
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Browse the catalog and find something worth listening to.
         </p>
@@ -31,6 +35,7 @@ export default async function CartPage() {
     (sum, item) => sum + item.qty * item.variant.priceCents,
     0
   );
+  const shippingCents = shippingForSubtotal(subtotalCents);
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
@@ -53,23 +58,13 @@ export default async function CartPage() {
           ))}
         </div>
 
-        <div className="h-fit border border-border p-6">
-          <div className="flex items-baseline justify-between text-sm">
-            <span className="text-muted-foreground">Subtotal</span>
-            <span className="font-mono tabular-nums">
-              {formatCents(subtotalCents)}
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Shipping and total calculated at checkout.
-          </p>
-          <Button className="mt-6 w-full" disabled>
-            Proceed to Checkout
-          </Button>
-          <p className="mt-2 text-center text-xs text-muted-foreground">
-            Checkout is coming in the next phase.
-          </p>
-        </div>
+        <CheckoutPanel
+          subtotalCents={subtotalCents}
+          shippingCents={shippingCents}
+          totalCents={subtotalCents + shippingCents}
+          isSignedIn={Boolean(session?.user)}
+          clientId={process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? null}
+        />
       </div>
     </div>
   );

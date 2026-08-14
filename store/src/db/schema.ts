@@ -201,8 +201,10 @@ export const orders = pgTable("orders", {
   subtotalCents: integer("subtotal_cents").notNull(),
   shippingCents: integer("shipping_cents").notNull(),
   totalCents: integer("total_cents").notNull(),
-  stripeSessionId: text("stripe_session_id").notNull().unique(),
-  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  // Unknown until PayPal responds: the order row is created first so its id
+  // can travel as the PayPal order's custom_id, then this is filled in.
+  paypalOrderId: text("paypal_order_id").unique(),
+  paypalCaptureId: text("paypal_capture_id"),
   shippingAddress: jsonb("shipping_address"),
   ...timestamps,
 });
