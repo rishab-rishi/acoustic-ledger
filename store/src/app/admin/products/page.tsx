@@ -118,7 +118,7 @@ export default async function AdminProductsPage({
                   <TableRow key={product.id} className="hover:bg-muted/40">
                     <TableCell>
                       <Link
-                        href={`/admin/products/${product.id}`}
+                        href={`/admin/products/${product.id}/edit`}
                         className="text-sm underline-offset-4 hover:underline"
                       >
                         {product.name}

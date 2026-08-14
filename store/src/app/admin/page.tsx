@@ -31,7 +31,7 @@ function Stat({
   href?: string;
 }) {
   const body = (
-    <div className="border border-border p-5 transition-colors data-[link]:hover:border-accent" data-link={href ? "" : undefined}>
+    <div className="border border-border p-5 transition-colors data-link:hover:border-accent" data-link={href ? "" : undefined}>
       <p className="text-xs tracking-wide text-muted-foreground uppercase">
         {label}
       </p>
@@ -145,7 +145,7 @@ export default async function AdminDashboardPage() {
                 {lowStock.map((v) => (
                   <li key={v.id}>
                     <Link
-                      href={`/admin/products/${v.productId}`}
+                      href={`/admin/products/${v.productId}/edit`}
                       className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-muted/40"
                     >
                       <div className="min-w-0">

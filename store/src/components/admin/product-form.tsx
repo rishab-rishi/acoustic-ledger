@@ -135,7 +135,7 @@ export function ProductForm({ categories, product }: Props) {
         setError(result.error);
         return;
       }
-      router.push(`/admin/products/${result.productId}`);
+      router.push(`/admin/products/${result.productId}/edit`);
     } catch {
       setError("Couldn't reach the server. Check your connection.");
     } finally {

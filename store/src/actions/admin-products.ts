@@ -236,7 +236,7 @@ export async function createVariant(input: unknown): Promise<ActionResult> {
   try {
     await db.insert(variants).values(parsed.data);
     refresh();
-    revalidatePath(`/admin/products/${parsed.data.productId}`);
+    revalidatePath(`/admin/products/${parsed.data.productId}/edit`);
     return { ok: true, notice: "Variant added." };
   } catch (err) {
     const conflict = uniqueViolation(err);
@@ -265,7 +265,7 @@ export async function updateVariant(input: unknown): Promise<ActionResult> {
     if (!row) return { ok: false, error: "That variant no longer exists." };
 
     refresh();
-    revalidatePath(`/admin/products/${row.productId}`);
+    revalidatePath(`/admin/products/${row.productId}/edit`);
     return { ok: true, notice: "Variant saved." };
   } catch (err) {
     const conflict = uniqueViolation(err);
@@ -309,7 +309,7 @@ export async function deleteVariant(input: unknown): Promise<ActionResult> {
     });
 
     refresh();
-    revalidatePath(`/admin/products/${variant.productId}`);
+    revalidatePath(`/admin/products/${variant.productId}/edit`);
     return { ok: true, notice: "Variant deleted." };
   } catch (err) {
     console.error("[admin] deleteVariant failed:", err);
