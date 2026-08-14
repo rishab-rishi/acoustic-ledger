@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+import { Search, ShoppingBag } from "lucide-react";
 import { AccountMenu } from "@/components/shop/account-menu";
 import { getCategories } from "@/db/queries";
 import { getCartItemCount } from "@/lib/cart";
@@ -41,6 +41,13 @@ export async function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
+          <Link
+            href="/products"
+            aria-label="Search products"
+            className="text-foreground/70 transition-colors hover:text-accent"
+          >
+            <Search className="size-5" />
+          </Link>
           <AccountMenu />
           <Link
             href="/cart"
