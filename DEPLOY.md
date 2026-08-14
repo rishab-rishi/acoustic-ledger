@@ -11,23 +11,24 @@ throughout development rather than Neon. Neither changes the deploy shape.
 
 ## Order of operations
 
-The steps genuinely depend on each other. Two circular dependencies drive the
-sequence:
-
-- **`AUTH_URL` needs the deployed URL**, which doesn't exist until the first
-  deploy. So the first deploy is expected to be half-configured.
-- **`NEXT_PUBLIC_*` values are inlined at build time**, not read at runtime.
-  Setting one after a build has no effect until you redeploy. This catches
-  people out because every other variable updates live.
-
 ```
 1. Neon project            → DATABASE_URL
-2. Vercel import           → first deploy, gives you the URL
-3. Env vars + redeploy     → app actually works
-4. Migrate + seed          → catalog exists
-5. PayPal webhook          → PAYPAL_WEBHOOK_ID, then redeploy
-6. Smoke test              → prove a real purchase completes
+2. Vercel import + env vars → first deploy
+3. Migrate + seed          → catalog exists
+4. PayPal webhook          → PAYPAL_WEBHOOK_ID, then redeploy
+5. Smoke test              → prove a real purchase completes
 ```
+
+Set the environment variables **before** the first deploy rather than after.
+`NEXT_PUBLIC_*` values are inlined at build time, not read at runtime, so
+adding `NEXT_PUBLIC_PAYPAL_CLIENT_ID` later has no effect until you redeploy —
+checkout would render "Payments aren't configured yet" in the meantime.
+
+There is no circular dependency on the deployed URL. `NEXT_PUBLIC_BASE_URL`
+isn't referenced anywhere in the source (it was in the spec's Stripe-era env
+list for building `success_url`; the PayPal flow uses relative URLs), and
+Auth.js v5 trusts the host automatically on Vercel, so `AUTH_URL` is not
+required either. Add `AUTH_URL` only if sign-in redirects misbehave.
 
 ---
 
@@ -73,8 +74,6 @@ Vercel → Project → Settings → Environment Variables. Set for **Production*
 |---|---|
 | `DATABASE_URL` | the pooled Neon string from step 1 |
 | `AUTH_SECRET` | generate a fresh one: `npx auth secret` |
-| `AUTH_URL` | `https://<your-app>.vercel.app` |
-| `NEXT_PUBLIC_BASE_URL` | `https://<your-app>.vercel.app` |
 | `PAYPAL_CLIENT_ID` | sandbox client id |
 | `PAYPAL_CLIENT_SECRET` | sandbox secret |
 | `NEXT_PUBLIC_PAYPAL_CLIENT_ID` | same value as `PAYPAL_CLIENT_ID` |
@@ -90,9 +89,26 @@ Vercel → Project → Settings → Environment Variables. Set for **Production*
 run unless `PAYPAL_API_BASE` points at the sandbox. See the *Demo fallback*
 section of `PAYPAL_SETUP.md`.
 
-Redeploy after setting these (Deployments → ⋯ → Redeploy). Env var changes do
-not rebuild on their own, and the `NEXT_PUBLIC_*` ones only take effect in a
-fresh build.
+If you add or change any of these after a deploy, redeploy (Deployments → ⋯ →
+Redeploy). Env var changes do not rebuild on their own, and the
+`NEXT_PUBLIC_*` ones only take effect in a fresh build.
+
+> **`DATABASE_URL` must exist before the build.** Not because the build reads
+> the database — it deliberately doesn't, see below — but because the app is
+> useless without it and the failure is easy to misread. A missing variable
+> makes `pg` fall back to `127.0.0.1:5432` and report `ECONNREFUSED`, which
+> looks like a database outage rather than an unset variable.
+
+### Builds don't touch the database
+
+`app/not-found.tsx` is marked `force-dynamic` for this reason. Next prerenders
+`/_not-found` at build time, and that page reads categories directly plus more
+through the header and footer — which made `next build` require a reachable
+database and failed the first deploy outright.
+
+Rendering it per request keeps builds independent of Neon. That matters beyond
+the initial setup: Neon scales to zero, so a build could otherwise fail
+against a cold database for reasons unrelated to the change being deployed.
 
 ## 4. Migrate and seed
 

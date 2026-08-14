@@ -8,6 +8,19 @@ import { getCategories } from "@/db/queries";
 export const metadata: Metadata = { title: "Page not found" };
 
 /**
+ * Keep this. Next prerenders /_not-found at build time, and this page reads
+ * the database — directly for the category shortcuts, and again through the
+ * header and footer. That made `next build` require a reachable database,
+ * which failed the first Vercel deploy outright (ECONNREFUSED against the
+ * localhost default, because DATABASE_URL isn't set during a build).
+ *
+ * Even with the variable set it would be the wrong dependency: Neon scales to
+ * zero, so a cold database could fail a deploy that has nothing to do with
+ * it. Rendering per request keeps builds independent of the database.
+ */
+export const dynamic = "force-dynamic";
+
+/**
  * Root 404. This renders outside the (shop) route group, so the storefront
  * chrome has to be mounted explicitly — otherwise a mistyped URL drops the
  * visitor onto a bare page with no way back into the store, which is exactly
