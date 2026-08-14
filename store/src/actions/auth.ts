@@ -1,0 +1,49 @@
+"use server";
+
+import bcrypt from "bcryptjs";
+import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import type { ActionResult } from "@/lib/action-result";
+
+const registerSchema = z.object({
+  name: z.string().trim().min(1, "Name is required.").max(80),
+  email: z.email("Enter a valid email address."),
+  password: z.string().min(8, "Password must be at least 8 characters."),
+});
+
+export async function registerUser(input: unknown): Promise<ActionResult> {
+  const parsed = registerSchema.safeParse(input);
+  if (!parsed.success) {
+    return {
+      ok: false,
+      error: parsed.error.issues[0]?.message ?? "Invalid details.",
+    };
+  }
+
+  const { name, password } = parsed.data;
+  const email = parsed.data.email.toLowerCase();
+
+  try {
+    const existing = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
+    if (existing) {
+      return { ok: false, error: "An account with that email already exists." };
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    await db.insert(users).values({
+      name,
+      email,
+      passwordHash,
+      role: "customer",
+    });
+
+    return { ok: true };
+  } catch (err) {
+    console.error("[auth] registerUser failed:", err);
+    return { ok: false, error: "Couldn't create your account. Try again." };
+  }
+}

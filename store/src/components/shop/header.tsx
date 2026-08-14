@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ShoppingBag, User } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
+import { AccountMenu } from "@/components/shop/account-menu";
 import { getCategories } from "@/db/queries";
 import { getCartItemCount } from "@/lib/cart";
 
@@ -40,13 +41,7 @@ export async function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <Link
-            href="/login"
-            aria-label="Account"
-            className="text-foreground/70 transition-colors hover:text-accent"
-          >
-            <User className="size-5" />
-          </Link>
+          <AccountMenu />
           <Link
             href="/cart"
             aria-label="Cart"

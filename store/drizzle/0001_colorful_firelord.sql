@@ -1,0 +1,3 @@
+CREATE UNIQUE INDEX "carts_user_id_unique" ON "carts" USING btree ("user_id") WHERE "carts"."user_id" IS NOT NULL;--> statement-breakpoint
+CREATE UNIQUE INDEX "carts_session_token_unique" ON "carts" USING btree ("session_token") WHERE "carts"."session_token" IS NOT NULL;--> statement-breakpoint
+ALTER TABLE "carts" ADD CONSTRAINT "carts_owner_present" CHECK (("carts"."user_id" IS NOT NULL) != ("carts"."session_token" IS NOT NULL));

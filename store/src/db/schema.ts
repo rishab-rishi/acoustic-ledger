@@ -1,6 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   customType,
   index,
   integer,
@@ -11,6 +12,7 @@ import {
   text,
   timestamp,
   unique,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
@@ -136,12 +138,28 @@ export const variants = pgTable("variants", {
 
 // --- Cart ---
 
-export const carts = pgTable("carts", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id),
-  sessionToken: text("session_token"),
-  ...timestamps,
-});
+export const carts = pgTable(
+  "carts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").references(() => users.id),
+    sessionToken: text("session_token"),
+    ...timestamps,
+  },
+  (t) => [
+    // A cart belongs to exactly one owner: a signed-in user or a guest cookie.
+    check(
+      "carts_owner_present",
+      sql`(${t.userId} IS NOT NULL) != (${t.sessionToken} IS NOT NULL)`
+    ),
+    uniqueIndex("carts_user_id_unique")
+      .on(t.userId)
+      .where(sql`${t.userId} IS NOT NULL`),
+    uniqueIndex("carts_session_token_unique")
+      .on(t.sessionToken)
+      .where(sql`${t.sessionToken} IS NOT NULL`),
+  ]
+);
 
 export const cartItems = pgTable(
   "cart_items",
