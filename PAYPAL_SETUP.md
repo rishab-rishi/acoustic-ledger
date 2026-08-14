@@ -134,8 +134,36 @@ Click the Personal account → **View/Edit** to get its email and system-generat
 password. You'll type those into the PayPal popup during testing, so keep them
 handy. The personal account comes preloaded with a fake balance and a test card.
 
-Create extra personal accounts with different country codes if you want to
-demo how the flow changes for a US vs. non-US buyer.
+> ### ⚠️ The buyer account must NOT be India-based
+>
+> This cost an hour of debugging, so it's worth stating plainly. Sandbox
+> accounts inherit the country of your developer account. **PayPal shut down
+> domestic payments within India in 2021, and the sandbox mirrors that** — an
+> India-based *personal* account cannot complete a purchase. What you see is a
+> login that times out quickly followed by:
+>
+> > Things don't appear to be working at the moment.
+>
+> …which says nothing about the real cause. Order creation succeeds, the order
+> sits at `CREATED` with no payer, and everything looks fine server-side.
+>
+> **Fix:** Sandbox Accounts → **Create account** → type **Personal**, country
+> **United States**. Use that account at checkout.
+>
+> To be clear about why this is fine: sandbox accounts are fictional test
+> fixtures with fake balances. Nothing is being asserted about anyone's real
+> identity or business, unlike a live provider signup.
+>
+> The **business** account can stay India-based — it accepts USD, EUR and GBP
+> from a cross-border buyer. Confirm with
+> `npx tsx scripts/diagnose-paypal-account.ts`, which probes exactly this.
+>
+> Related symptom, different cause: *"You are logging in to the account of the
+> seller for this purchase"* means you used the **business** account to buy.
+> PayPal blocks buying from yourself — log out fully and use the personal one.
+>
+> Note INR is rejected at order creation with `CURRENCY_NOT_SUPPORTED`; PayPal's
+> REST API does not support it. This store prices in USD, which is unaffected.
 
 ## 3. Install the SDK
 
@@ -363,6 +391,21 @@ account receiving USD there are export-documentation requirements. Out of scope
 for a portfolio piece, but worth knowing before quoting a client.
 
 ---
+
+## Diagnostic scripts
+
+All under `store/`, run with `npx tsx`:
+
+| Script | What it answers |
+|---|---|
+| `scripts/diagnose-paypal-account.ts` | Which currencies will this merchant accept? Is the account reachable at all? |
+| `scripts/inspect-paypal-orders.ts` | What state does PayPal think our recent orders are in — and did a payer ever approve one? |
+| `scripts/verify-paypal-order.ts` | Does PayPal accept our real order payload, and do `custom_id` and amounts round-trip exactly? |
+| `scripts/verify-settlement.ts` | Can settlement double-decrement stock under duplicate or concurrent delivery? (No DB or PayPal setup beyond a seeded database.) |
+
+`inspect-paypal-orders.ts` is the one to reach for when a checkout fails in the
+browser: if it reports `CREATED` with no payer, the order was fine and the
+failure was inside PayPal's UI, not our code.
 
 ## Reference
 
