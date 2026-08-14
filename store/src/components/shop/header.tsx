@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Search, ShoppingBag } from "lucide-react";
 import { AccountMenu } from "@/components/shop/account-menu";
+import { MobileNav } from "@/components/shop/mobile-nav";
 import { getCategories } from "@/db/queries";
 import { getCartItemCount } from "@/lib/cart";
 
@@ -11,7 +12,7 @@ export async function Header() {
   ]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
         <Link href="/" className="flex flex-col leading-none">
           <span className="font-mono text-sm font-semibold tracking-[0.2em] uppercase">
@@ -61,6 +62,8 @@ export async function Header() {
               </span>
             ) : null}
           </Link>
+
+          <MobileNav categories={categories} />
         </div>
       </div>
     </header>

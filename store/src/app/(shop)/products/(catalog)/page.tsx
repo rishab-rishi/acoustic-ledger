@@ -6,6 +6,7 @@ import { SortSelect } from "@/components/shop/sort-select";
 import { Button } from "@/components/ui/button";
 import {
   getCategories,
+  getCategoryBySlug,
   getPriceRange,
   getSuggestions,
   isSort,
@@ -15,9 +16,39 @@ import { type CatalogParams, catalogHref } from "@/lib/catalog-url";
 import { formatCents, parseDollarsToCents } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "All Products",
-};
+/**
+ * The catalog is one route serving search results, category listings and the
+ * full catalog, so a fixed title would mislabel most of them — including in
+ * the browser history, which is where it's most confusing.
+ */
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<CatalogParams>;
+}): Promise<Metadata> {
+  const { q, category } = await searchParams;
+
+  if (q?.trim()) {
+    return {
+      title: `Search: ${q.trim()}`,
+      description: `Products matching “${q.trim()}” at Acoustic Ledger.`,
+    };
+  }
+
+  if (category) {
+    const found = await getCategoryBySlug(category);
+    if (found) {
+      return {
+        title: found.name,
+        description:
+          found.description ??
+          `${found.name} from Acoustic Ledger — balanced, accurate audio gear.`,
+      };
+    }
+  }
+
+  return { title: "All Products" };
+}
 
 function FilterChip({ href, children }: { href: string; children: React.ReactNode }) {
   return (
