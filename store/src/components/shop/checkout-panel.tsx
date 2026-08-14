@@ -4,6 +4,7 @@ import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createPaypalOrder } from "@/actions/checkout";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatCents } from "@/lib/format";
@@ -14,6 +15,7 @@ type Props = {
   totalCents: number;
   isSignedIn: boolean;
   clientId: string | null;
+  demoEnabled: boolean;
 };
 
 export function CheckoutPanel({
@@ -22,6 +24,7 @@ export function CheckoutPanel({
   totalCents,
   isSignedIn,
   clientId,
+  demoEnabled,
 }: Props) {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -31,6 +34,38 @@ export function CheckoutPanel({
   const needsEmail = !isSignedIn;
   const emailLooksValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim());
   const canPay = !needsEmail || emailLooksValid;
+
+  function goToOrder(orderId: string) {
+    router.push(`/checkout/success?order=${encodeURIComponent(orderId)}`);
+    router.refresh();
+  }
+
+  /**
+   * Bypasses PayPal entirely — the server still creates and settles a real
+   * order. Only mounted when the server says the fallback is enabled, and the
+   * route 404s independently of this button.
+   */
+  async function runDemoCheckout() {
+    setError(null);
+    setBusy(true);
+    try {
+      const res = await fetch("/api/demo/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(needsEmail ? { email: email.trim() } : {}),
+      });
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(payload.error ?? "Demo checkout isn't available.");
+        return;
+      }
+      goToOrder(payload.orderId);
+    } catch {
+      setError("Demo checkout failed. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <div className="h-fit border border-border p-6">
@@ -113,10 +148,7 @@ export function CheckoutPanel({
                       setError(payload.error ?? "Payment could not be completed.");
                       return;
                     }
-                    router.push(
-                      `/checkout/success?order=${encodeURIComponent(payload.orderId)}`
-                    );
-                    router.refresh();
+                    goToOrder(payload.orderId);
                   } catch {
                     setError(
                       "Payment was approved but confirming it failed. Check your order history before retrying."
@@ -138,6 +170,32 @@ export function CheckoutPanel({
           </div>
         )}
       </div>
+
+      {demoEnabled ? (
+        <div className="mt-4">
+          {clientId ? (
+            <div className="mb-3 flex items-center gap-3" aria-hidden>
+              <span className="h-px flex-1 bg-border" />
+              <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                or
+              </span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+          ) : null}
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            disabled={!canPay || busy}
+            onClick={runDemoCheckout}
+          >
+            Simulate payment
+          </Button>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Demo shortcut — places a real order without contacting PayPal.
+          </p>
+        </div>
+      ) : null}
 
       {needsEmail && !emailLooksValid ? (
         <p className="mt-3 text-xs text-muted-foreground">

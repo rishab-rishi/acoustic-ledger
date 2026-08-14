@@ -5,6 +5,7 @@ import { CartItemRow } from "@/components/shop/cart-item-row";
 import { CheckoutPanel } from "@/components/shop/checkout-panel";
 import { Button } from "@/components/ui/button";
 import { getCart } from "@/lib/cart";
+import { isDemoCheckoutEnabled } from "@/lib/demo-checkout";
 import { shippingForSubtotal } from "@/lib/paypal";
 
 export const metadata: Metadata = {
@@ -64,6 +65,7 @@ export default async function CartPage() {
           totalCents={subtotalCents + shippingCents}
           isSignedIn={Boolean(session?.user)}
           clientId={process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? null}
+          demoEnabled={isDemoCheckoutEnabled()}
         />
       </div>
     </div>

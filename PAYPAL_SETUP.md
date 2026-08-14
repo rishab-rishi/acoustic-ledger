@@ -49,6 +49,7 @@ Environment variables needed in `store/.env.local`:
 | `PAYPAL_WEBHOOK_ID` | Dashboard → app → Webhooks | `4XY12345AB678901C` |
 | `PAYPAL_API_BASE` | fixed for sandbox | `https://api-m.sandbox.paypal.com` |
 | `NEXT_PUBLIC_PAYPAL_CLIENT_ID` | same as `PAYPAL_CLIENT_ID` | `AZxK9...` |
+| `DEMO_CHECKOUT_FALLBACK` | optional, see *Demo fallback* below | `1` |
 
 The client ID is public by design — the JS SDK needs it in the browser. Only
 `PAYPAL_CLIENT_SECRET` is a real credential. It stays in `.env.local`, which is
@@ -277,6 +278,45 @@ You can also use Dashboard → **Webhooks Simulator**, but note the catch below.
 > events (it should), simulator events will 401 — that's correct behaviour, not
 > a bug. Test signature verification with real sandbox transactions, and use
 > ngrok replay for idempotency testing.
+
+---
+
+## Demo fallback — checkout without PayPal
+
+Set `DEMO_CHECKOUT_FALLBACK=1` in `store/.env.local` and a **Simulate payment**
+button appears beside the PayPal buttons on the cart page. It places a real
+order — settled, stock decremented, cart cleared, visible in order history and
+in the admin queue — without contacting PayPal at all.
+
+**Why it exists.** This store gets demoed live. PayPal's sandbox has already
+proven it can fail for reasons that have nothing to do with this codebase (see
+the India buyer-account warning above), and losing checkout mid-pitch also loses
+everything downstream of it — confirmation, history, fulfilment. There's a
+smaller everyday reason too: the genuine flow leaves your site for PayPal's
+sandbox login, which is roughly thirty seconds of someone else's UI in the
+middle of your own demo.
+
+**How it's fenced in.** It marks orders paid without money moving, so:
+
+1. **Off unless explicitly enabled.** `/api/demo/checkout` returns **404** when
+   `DEMO_CHECKOUT_FALLBACK` isn't `1` — the endpoint doesn't merely hide, it
+   doesn't function.
+2. **Sandbox only.** Refused unless `PAYPAL_API_BASE` points at
+   `sandbox.paypal.com`. This is a whitelist: anything unrecognised counts as
+   live, so a real-money configuration cannot self-settle even if the flag gets
+   switched on by mistake.
+3. **Stamped.** Every order it creates gets a `DEMO-…` value in
+   `paypal_capture_id` and no `paypal_order_id`, so no amount of database
+   inspection can confuse one with a genuine payment.
+
+Note that `NODE_ENV` is deliberately *not* the gate. The demo runs on the
+deployed build, which is exactly where a production check would disable it.
+
+**What it does not do.** It doesn't exercise the PayPal integration, so it must
+never be how we verify payments work — that's a real sandbox purchase plus
+`verify-settlement.ts`. It shares `createPendingOrder()` and `settleOrder()`
+with the real path, so what lands in the database is identical; only the payment
+provider is absent.
 
 ---
 
