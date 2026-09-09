@@ -40,33 +40,40 @@ export default async function CheckoutSuccessPage({
   const isCancelled = order.status === "cancelled";
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-20">
-      <p className="font-mono text-xs tracking-[0.3em] text-accent uppercase">
-        {isPending ? "Processing" : isCancelled ? "Cancelled" : "Confirmed"}
-      </p>
-
-      <h1 className="mt-3 text-2xl font-medium tracking-tight">
+    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+      <h1 className="flex items-center gap-3 font-condensed text-3xl font-bold uppercase tracking-[0.02em] text-foreground">
+        <span
+          className="led-dot shrink-0"
+          style={
+            isCancelled
+              ? { background: "var(--ramp-1)" }
+              : isPending
+                ? { background: "var(--ramp-2)" }
+                : { background: "var(--ramp-4)" }
+          }
+          aria-hidden
+        />
         {isPending
           ? "Almost there"
           : isCancelled
             ? "This order was cancelled"
-            : "Thank you — your order is confirmed"}
+            : "Order confirmed"}
       </h1>
 
       {isPending ? (
         <OrderStatusPoller />
       ) : (
-        <p className="mt-3 text-sm text-muted-foreground">
+        <p className="mt-3 font-sans text-sm text-muted-foreground">
           A receipt is on its way to {order.email}.
         </p>
       )}
 
-      <div className="mt-10 border border-border">
+      <div className="panel relative mt-10">
         <div className="flex items-baseline justify-between border-b border-border px-5 py-3">
-          <span className="text-xs tracking-wide text-muted-foreground uppercase">
-            Order
+          <span className="silkscreen">Order</span>
+          <span className="font-mono text-xs text-foreground">
+            {order.id.slice(0, 8)}
           </span>
-          <span className="font-mono text-xs">{order.id.slice(0, 8)}</span>
         </div>
 
         <ul className="divide-y divide-border">

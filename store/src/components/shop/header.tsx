@@ -12,55 +12,64 @@ export async function Header() {
   ]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
-        <Link href="/" className="flex flex-col leading-none">
-          <span className="font-mono text-sm font-semibold tracking-[0.2em] uppercase">
-            Acoustic Ledger
-          </span>
-          <span className="text-[11px] tracking-wide text-muted-foreground">
-            Balanced by design
+    <header className="sticky top-0 z-40 border-b border-border-strong bg-panel/95 backdrop-blur supports-backdrop-filter:bg-panel/80">
+      <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6">
+        <Link
+          href="/"
+          className="flex shrink-0 items-center"
+          aria-label="Acoustic Ledger — home"
+        >
+          <span className="flex h-8 items-center gap-1.5 rounded-[2px] border border-border bg-panel-sunken px-2 shadow-[inset_0_1px_2px_rgba(0,0,0,.6)] sm:gap-2 sm:px-2.5">
+            <span className="led-dot" aria-hidden />
+            <span className="font-condensed text-[13px] font-bold uppercase leading-none tracking-[0.14em] text-foreground sm:text-[15px] sm:tracking-[0.18em]">
+              Acoustic&nbsp;Ledger
+            </span>
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm md:flex">
+        <nav className="ml-2 hidden items-center gap-5 md:flex">
           <Link
             href="/products"
-            className="text-foreground/80 transition-colors hover:text-accent"
+            className="silkscreen transition-colors hover:text-foreground"
           >
-            All Products
+            All Units
           </Link>
-          {categories.map((category) => (
+          {categories.slice(0, 3).map((category) => (
             <Link
               key={category.id}
               href={`/products?category=${category.slug}`}
-              className="text-foreground/80 transition-colors hover:text-accent"
+              className="silkscreen transition-colors hover:text-foreground"
             >
               {category.name}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="ml-auto flex shrink-0 items-center gap-2.5 sm:gap-4">
           <Link
             href="/products"
             aria-label="Search products"
-            className="text-foreground/70 transition-colors hover:text-accent"
+            className="flex text-muted-foreground transition-colors hover:text-accent"
           >
-            <Search className="size-5" />
+            <Search className="size-4.5" />
           </Link>
           <AccountMenu />
           <Link
             href="/cart"
-            aria-label="Cart"
-            className="relative text-foreground/70 transition-colors hover:text-accent"
+            aria-label={`Cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`}
+            className="flex items-center gap-1.5 rounded-[2px] border border-border bg-panel-sunken px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ShoppingBag className="size-5" />
-            {cartCount > 0 ? (
-              <span className="absolute -top-2 -right-2 flex size-4 items-center justify-center rounded-full bg-accent text-[10px] font-medium text-accent-foreground">
-                {cartCount > 9 ? "9+" : cartCount}
-              </span>
-            ) : null}
+            <ShoppingBag className="size-4" />
+            <span
+              className="led-readout min-w-[1.25ch] text-center text-[13px] font-medium"
+              style={
+                cartCount === 0
+                  ? { color: "#3a3a37", textShadow: "none" }
+                  : undefined
+              }
+            >
+              {cartCount > 9 ? "9+" : cartCount}
+            </span>
           </Link>
 
           <MobileNav categories={categories} />

@@ -68,21 +68,29 @@ export function CheckoutPanel({
   }
 
   return (
-    <div className="h-fit border border-border p-6">
-      <dl className="space-y-2 text-sm">
+    <div className="panel relative h-fit p-5">
+      <dl className="space-y-2 font-mono text-sm">
         <div className="flex items-baseline justify-between">
-          <dt className="text-muted-foreground">Subtotal</dt>
-          <dd className="font-mono tabular-nums">{formatCents(subtotalCents)}</dd>
+          <dt className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+            Subtotal
+          </dt>
+          <dd className="tabular-nums text-foreground">{formatCents(subtotalCents)}</dd>
         </div>
         <div className="flex items-baseline justify-between">
-          <dt className="text-muted-foreground">Shipping</dt>
-          <dd className="font-mono tabular-nums">
+          <dt className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+            Shipping
+          </dt>
+          <dd className="tabular-nums text-foreground">
             {shippingCents === 0 ? "Free" : formatCents(shippingCents)}
           </dd>
         </div>
-        <div className="flex items-baseline justify-between border-t border-border pt-2 font-medium">
-          <dt>Total</dt>
-          <dd className="font-mono tabular-nums">{formatCents(totalCents)}</dd>
+        <div className="mt-1 flex items-baseline justify-between border-t border-border pt-3">
+          <dt className="text-[11px] uppercase tracking-[0.12em] text-foreground">
+            Total
+          </dt>
+          <dd className="led-readout text-base tabular-nums">
+            {formatCents(totalCents)}
+          </dd>
         </div>
       </dl>
 

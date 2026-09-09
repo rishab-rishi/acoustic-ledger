@@ -39,31 +39,35 @@ export default async function OrdersPage() {
 
   if (history.length === 0) {
     return (
-      <div className="mx-auto max-w-6xl px-6 py-24 text-center">
-        <h1 className="text-2xl font-medium tracking-tight">No orders yet</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Once you place an order it will show up here.
+      <div className="mx-auto max-w-md px-6 py-24 text-center">
+        <h1 className="font-condensed text-2xl font-bold uppercase tracking-[0.04em] text-foreground">
+          No orders yet
+        </h1>
+        <p className="mt-2 font-sans text-sm text-muted-foreground">
+          Once you place an order it shows up here.
         </p>
         <Button className="mt-8" render={<Link href="/products" />}>
-          Shop All Products
+          Browse all units
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="mb-8 text-2xl font-medium tracking-tight">Order History</h1>
+    <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
+      <h1 className="mb-8 font-condensed text-2xl font-bold uppercase tracking-[0.04em] text-foreground sm:text-3xl">
+        Order History
+      </h1>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {history.map((order) => (
-          <article key={order.id} className="border border-border">
+          <article key={order.id} className="panel relative">
             <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3">
               <div>
-                <p className="font-mono text-xs text-muted-foreground">
+                <p className="font-mono text-xs text-foreground">
                   {order.id.slice(0, 8)}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="font-mono text-[11px] text-muted-foreground">
                   {dateFormatter.format(order.createdAt)}
                 </p>
               </div>
@@ -71,7 +75,7 @@ export default async function OrdersPage() {
                 <Badge variant={STATUS_VARIANT[order.status]}>
                   {order.status}
                 </Badge>
-                <span className="font-mono text-sm tabular-nums">
+                <span className="font-mono text-sm tabular-nums text-foreground">
                   {formatCents(order.totalCents)}
                 </span>
               </div>
@@ -83,12 +87,14 @@ export default async function OrdersPage() {
                   <div>
                     {/* Snapshotted at purchase time — never re-joined to
                         products, so editing a price today can't rewrite this. */}
-                    <p className="text-sm">{item.productName}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-sans text-sm text-foreground">
+                      {item.productName}
+                    </p>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
                       {item.variantName} · qty {item.qty}
                     </p>
                   </div>
-                  <p className="font-mono text-sm tabular-nums">
+                  <p className="font-mono text-sm tabular-nums text-foreground">
                     {formatCents(item.unitPriceCents * item.qty)}
                   </p>
                 </li>

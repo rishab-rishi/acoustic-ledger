@@ -8,8 +8,21 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-condensed);
+  --font-condensed: var(--font-condensed);
+
+  --color-panel: var(--panel);
+  --color-panel-raised: var(--panel-raised);
+  --color-panel-sunken: var(--panel-sunken);
+  --color-border-strong: var(--border-strong);
+
+  --color-ramp-1: var(--ramp-1);
+  --color-ramp-2: var(--ramp-2);
+  --color-ramp-3: var(--ramp-3);
+  --color-ramp-4: var(--ramp-4);
+  --color-led: var(--led);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,92 +52,287 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 12px;
+  --radius-4xl: 16px;
 }
 
+/*
+ * "The Rack" — the storefront is a loaded 19" outboard rack. Near-black matte
+ * anodized panel as the page ground, 808 velocity ramp as the only functional
+ * color, LEDs and segmented readouts as the only light. See
+ * .impeccable/surfaces/store-src-app-shop-page-tsx.md.
+ */
 :root {
-  --background: #f3efe7;
-  --foreground: #232019;
-  --card: #faf8f3;
-  --card-foreground: #232019;
-  --popover: #faf8f3;
-  --popover-foreground: #232019;
-  --primary: #232019;
-  --primary-foreground: #f3efe7;
-  --secondary: #e7e1d3;
-  --secondary-foreground: #232019;
-  --muted: #e9e4d8;
-  --muted-foreground: #6b6559;
-  --accent: #b3703b;
-  --accent-foreground: #f3efe7;
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: #ddd5c1;
-  --input: #ddd5c1;
-  --ring: #b3703b;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.25rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  color-scheme: dark;
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #141414;
+  --foreground: #ECEAE3;
+
+  --panel: #1c1c1e;
+  --panel-raised: #262629;
+  --panel-sunken: #0f0f10;
+
+  --card: #1c1c1e;
+  --card-foreground: #ECEAE3;
+  --popover: #212124;
+  --popover-foreground: #ECEAE3;
+
+  --primary: #ff3b30;
+  --primary-foreground: #180706;
+  --secondary: #262629;
+  --secondary-foreground: #ECEAE3;
+  --muted: #202023;
+  --muted-foreground: #9c988d;
+  --accent: #ff9a00;
+  --accent-foreground: #1a1103;
+  --destructive: #ff3b30;
+
+  --border: #333330;
+  --border-strong: #47463f;
+  --input: #38372f;
+  --ring: #ff9a00;
+
+  --ramp-1: #ff3b30;
+  --ramp-2: #ff9a00;
+  --ramp-3: #ffe100;
+  --ramp-4: #f2f2f2;
+  --led: #ff5a4b;
+  /* A lit segment reads bright, not bloomed — kept tight on purpose. */
+  --led-shadow: 0 0 2px rgba(255, 120, 95, 0.7);
+
+  --chart-1: #ff3b30;
+  --chart-2: #ff9a00;
+  --chart-3: #ffe100;
+  --chart-4: #f2f2f2;
+  --chart-5: #9c988d;
+  --radius: 3px;
+
+  --sidebar: #191919;
+  --sidebar-foreground: #ECEAE3;
+  --sidebar-primary: #ff3b30;
+  --sidebar-primary-foreground: #180706;
+  --sidebar-accent: #262629;
+  --sidebar-accent-foreground: #ECEAE3;
+  --sidebar-border: #333330;
+  --sidebar-ring: #ff9a00;
+
+  /* Fine silkscreen-print grain — kills the flat-fill "AI" read. */
+  --panel-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+    /* Corner-to-corner tonal drift: the panel reads as anodized metal, never
+       one hex value. */
+    background-color: var(--background);
+    background-image:
+      radial-gradient(120% 90% at 12% 0%, rgba(255, 255, 255, 0.028), transparent 55%),
+      radial-gradient(130% 120% at 100% 100%, rgba(0, 0, 0, 0.5), transparent 60%);
+    background-attachment: fixed;
   }
+
+  /* Grain sits above the ground, below content — the print texture is meant
+     to be felt, not guessed at. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: var(--panel-grain);
+    background-size: 130px 130px;
+    opacity: 0.11;
+    mix-blend-mode: overlay;
+  }
+
+  body > * {
+    position: relative;
+    z-index: 1;
+  }
+
   html {
     @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-condensed), var(--font-sans), system-ui, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* Browser surfaces wear the panel, not the platform defaults. */
+  ::selection {
+    background: rgba(255, 154, 0, 0.28);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--panel-sunken);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #3a3a37;
+    border: 3px solid var(--panel-sunken);
+    border-radius: 6px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4a4a45;
+  }
+  * {
+    scrollbar-color: #3a3a37 var(--panel-sunken);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted-foreground);
+  }
+}
+
+@layer components {
+  /* A rack module: matte anodized faceplate with a machined bezel — a lit top
+     edge, a shadowed bottom edge, and the print grain carried on the panel
+     itself so it never reads as one flat fill. */
+  .panel {
+    position: relative;
+    background-color: var(--panel);
+    background-image: var(--panel-grain);
+    background-size: 130px 130px;
+    background-blend-mode: overlay;
+    border: 1px solid var(--border);
+    border-top-color: #3d3d39;
+    border-bottom-color: #131312;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.4),
+      0 1px 0 rgba(0, 0, 0, 0.6);
+  }
+
+  .panel-raised {
+    background-color: var(--panel-raised);
+    border: 1px solid var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
+  .panel-inset {
+    background-color: var(--panel-sunken);
+    border: 1px solid #2a2a28;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Silkscreen legend: the label printed on a hardware panel. */
+  .silkscreen {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.6875rem;
+    line-height: 1;
+    color: var(--muted-foreground);
+  }
+
+  /* Rack-screw rivet — one at each corner of a module. */
+  .rivet {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 28%, #5c5c56, #17171590 62%, #0c0c0b);
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, 0.7),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.6),
+      0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+  .rivet::after {
+    content: "";
+    position: absolute;
+    inset: 4.5px 1.5px;
+    background: #0b0b0a;
+    border-radius: 1px;
+    box-shadow: 0 1px 0 rgba(120, 120, 112, 0.25);
+    transform: rotate(-32deg);
+  }
+
+  /* Segmented LED readout — one of the only things that emits light. */
+  .led-readout {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    color: var(--led);
+    text-shadow: var(--led-shadow);
+    letter-spacing: 0.04em;
+  }
+
+  .led-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--led);
+    box-shadow: var(--led-shadow);
+  }
+  .led-dot-off {
+    background: #2b2b28;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
+  }
+
+  /*
+   * Product imagery is 12 shared placeholder shots on a cream ground. Rather
+   * than let them glow as light boxes on the panel, they read as dim
+   * monochrome reference prints recessed into an inset well.
+   */
+  .spec-photo {
+    filter: grayscale(1) brightness(0.3) contrast(1.6);
+    opacity: 0.6;
+  }
+  .group:hover .spec-photo {
+    filter: grayscale(0.5) brightness(0.42) contrast(1.45);
+    opacity: 0.88;
+  }
+
+  /* Registration crosshairs at a well's corners — the plate-section tell. */
+  .reg-marks::before,
+  .reg-marks::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 0 solid var(--border-strong);
+    pointer-events: none;
+  }
+  .reg-marks::before {
+    top: 6px;
+    left: 6px;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+  .reg-marks::after {
+    bottom: 6px;
+    right: 6px;
+    border-bottom-width: 1px;
+    border-right-width: 1px;
   }
 }

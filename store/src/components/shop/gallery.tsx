@@ -10,15 +10,15 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
 
   return (
     <div>
-      <div className="relative aspect-square overflow-hidden border border-border bg-card">
+      <div className="panel-inset reg-marks group relative aspect-square overflow-hidden">
         {shown ? (
           <Image
             src={shown[active]}
             alt={alt}
             fill
-            sizes="(min-width: 1024px) 50vw, 100vw"
+            sizes="(min-width: 1024px) 40vw, 100vw"
             priority
-            className="object-cover"
+            className="spec-photo object-cover"
           />
         ) : null}
       </div>
@@ -28,13 +28,20 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
             <button
               key={img}
               type="button"
+              aria-label={`View image ${i + 1}`}
+              aria-pressed={i === active}
               onClick={() => setActive(i)}
               className={cn(
-                "relative size-16 overflow-hidden border",
-                i === active ? "border-foreground" : "border-border"
+                "panel-inset relative size-16 overflow-hidden transition-colors",
+                i === active ? "border-accent" : "hover:border-border-strong"
               )}
             >
-              <Image src={img} alt="" fill className="object-cover" />
+              <Image
+                src={img}
+                alt=""
+                fill
+                className="spec-photo object-cover"
+              />
             </button>
           ))}
         </div>

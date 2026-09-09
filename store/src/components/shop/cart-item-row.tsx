@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { removeCartItem, updateCartItem } from "@/actions/cart";
 import { formatCents } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 type CartItemRowProps = {
   itemId: string;
@@ -69,49 +70,55 @@ export function CartItemRow({
   }
 
   return (
-    <div className="flex gap-4 border-b border-border py-6 last:border-b-0">
-      <div className="relative size-24 shrink-0 overflow-hidden border border-border bg-card">
+    <div className="flex gap-4 p-4">
+      <div className="panel-inset relative size-20 shrink-0 overflow-hidden">
         {image ? (
-          <Image src={image} alt={productName} fill className="object-cover" />
+          <Image
+            src={image}
+            alt={productName}
+            fill
+            sizes="80px"
+            className="spec-photo object-cover"
+          />
         ) : null}
       </div>
 
-      <div className="flex flex-1 flex-col justify-between">
+      <div className="flex flex-1 flex-col justify-between gap-2">
         <div className="flex items-start justify-between gap-4">
           <div>
             <Link
               href={`/products/${productSlug}`}
-              className="text-sm font-medium hover:text-accent"
+              className="font-condensed text-base font-semibold uppercase leading-tight tracking-[0.02em] text-foreground transition-colors hover:text-accent"
             >
               {productName}
             </Link>
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
               {variantName}
             </p>
           </div>
-          <p className="font-mono text-sm tabular-nums">
+          <p className="font-mono text-sm tabular-nums text-foreground">
             {formatCents(unitPriceCents * qty)}
           </p>
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center border border-border">
+          <div className="panel-inset flex items-center">
             <button
               type="button"
               aria-label="Decrease quantity"
-              className="flex size-8 items-center justify-center text-foreground/70 transition-colors hover:text-foreground disabled:opacity-40"
+              className="flex size-8 items-center justify-center font-mono text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
               disabled={isPending || qty <= 1}
               onClick={() => changeQty(qty - 1)}
             >
               −
             </button>
-            <span className="w-7 text-center font-mono text-xs tabular-nums">
+            <span className="w-7 text-center font-mono text-xs tabular-nums text-foreground">
               {qty}
             </span>
             <button
               type="button"
               aria-label="Increase quantity"
-              className="flex size-8 items-center justify-center text-foreground/70 transition-colors hover:text-foreground disabled:opacity-40"
+              className="flex size-8 items-center justify-center font-mono text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
               disabled={isPending || qty >= maxQty}
               onClick={() => changeQty(qty + 1)}
             >
@@ -123,7 +130,7 @@ export function CartItemRow({
             type="button"
             disabled={isPending}
             onClick={remove}
-            className="text-xs text-muted-foreground underline-offset-2 transition-colors hover:text-destructive hover:underline disabled:opacity-40"
+            className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground underline-offset-2 transition-colors hover:text-destructive hover:underline disabled:opacity-40"
           >
             Remove
           </button>
@@ -131,9 +138,10 @@ export function CartItemRow({
 
         {message ? (
           <p
-            className={
-              isError ? "text-xs text-destructive" : "text-xs text-muted-foreground"
-            }
+            className={cn(
+              "font-sans text-xs",
+              isError ? "text-destructive" : "text-muted-foreground"
+            )}
           >
             {message}
           </p>

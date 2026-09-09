@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-09T00:00:00Z",
+  "title": "Design System: Acoustic Ledger",
+  "extensions": {
+    "colorMeta": {
+      "panel-black": { "role": "neutral", "displayName": "Panel Black", "canonical": "#141414", "tonalRamp": ["#0c0c0c", "#141414", "#1c1c1e", "#262629", "#3a3a37", "#5c5c56", "#8a8a82", "#c9c8c0"] },
+      "panel": { "role": "neutral", "displayName": "Faceplate", "canonical": "#1c1c1e", "tonalRamp": ["#101011", "#161617", "#1c1c1e", "#262629", "#33333a", "#4a4a52", "#7d7d86", "#c2c2c8"] },
+      "panel-raised": { "role": "neutral", "displayName": "Faceplate Raised", "canonical": "#262629", "tonalRamp": ["#141416", "#1e1e20", "#262629", "#313135", "#454549", "#5f5f64", "#8c8c92", "#cacace"] },
+      "panel-sunken": { "role": "neutral", "displayName": "Faceplate Sunken", "canonical": "#0f0f10", "tonalRamp": ["#060607", "#0b0b0c", "#0f0f10", "#18181a", "#2a2a2c", "#444447", "#77777b", "#bcbcc0"] },
+      "faceplate-text": { "role": "neutral", "displayName": "Ink (Off-White)", "canonical": "#ECEAE3", "tonalRamp": ["#2b2a26", "#48463f", "#6b6960", "#8f8c81", "#b3b0a5", "#d2cfc4", "#ECEAE3", "#f7f6f1"] },
+      "silkscreen-grey": { "role": "neutral", "displayName": "Silkscreen Grey", "canonical": "#9c988d", "tonalRamp": ["#26251f", "#3d3b33", "#54524734", "#6c6a5d", "#847f71", "#9c988d", "#bcb9af", "#dedcd5"] },
+      "seam": { "role": "neutral", "displayName": "Seam", "canonical": "#333330", "tonalRamp": ["#161614", "#222220", "#333330", "#42423d", "#54534c", "#6d6c63", "#9a998e", "#d0cfc6"] },
+      "seam-strong": { "role": "neutral", "displayName": "Seam Strong", "canonical": "#47463f", "tonalRamp": ["#1d1d19", "#2f2e29", "#47463f", "#5a5950", "#6e6d62", "#87867a", "#adaca0", "#d9d8ce"] },
+      "field-stroke": { "role": "neutral", "displayName": "Field Stroke", "canonical": "#38372f", "tonalRamp": ["#18170f", "#28271c", "#38372f", "#48473c", "#5b5a4d", "#767463", "#a09d89", "#d4d2c4"] },
+      "ramp-red": { "role": "primary", "displayName": "Velocity Red", "canonical": "#ff3b30", "tonalRamp": ["#3a0a06", "#5f120c", "#8a1a12", "#b8231a", "#e02f23", "#ff3b30", "#ff7a72", "#ffb9b4"] },
+      "ramp-orange": { "role": "primary", "displayName": "Velocity Amber", "canonical": "#ff9a00", "tonalRamp": ["#3a2400", "#5e3900", "#8a5400", "#b87000", "#e08800", "#ff9a00", "#ffbe5c", "#ffddab"] },
+      "ramp-yellow": { "role": "secondary", "displayName": "Velocity Yellow", "canonical": "#ffe100", "tonalRamp": ["#3a3300", "#5e5200", "#8a7900", "#b8a200", "#e0c600", "#ffe100", "#ffec5c", "#fff5ab"] },
+      "ramp-white": { "role": "secondary", "displayName": "Velocity White", "canonical": "#f2f2f2", "tonalRamp": ["#2c2c2c", "#494949", "#6c6c6c", "#909090", "#b4b4b4", "#d3d3d3", "#f2f2f2", "#fafafa"] },
+      "led-red": { "role": "primary", "displayName": "LED Red (Emissive)", "canonical": "#ff5a4b", "tonalRamp": ["#3a0f0a", "#5f1810", "#8a2318", "#b83022", "#e0402f", "#ff5a4b", "#ff9187", "#ffc4bd"] },
+      "amber-armed": { "role": "primary", "displayName": "Amber Armed", "canonical": "#ff9a00", "tonalRamp": ["#3a2400", "#5e3900", "#8a5400", "#b87000", "#e08800", "#ff9a00", "#ffbe5c", "#ffddab"] },
+      "primary-ink": { "role": "neutral", "displayName": "Primary Ink", "canonical": "#180706", "tonalRamp": ["#180706", "#2c0d0b", "#431411", "#5d1c17", "#79241e", "#973026", "#c9564a", "#e7a49b"] },
+      "amber-ink": { "role": "neutral", "displayName": "Amber Ink", "canonical": "#1a1103", "tonalRamp": ["#1a1103", "#2c1d06", "#42300b", "#5d4611", "#795e18", "#977a26", "#c9a94a", "#e7d29b"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Category faceplate names and the PDP product title. Saira Condensed 700, uppercase, tracked." },
+      "headline": { "displayName": "Headline", "purpose": "PDP product name and section headers." },
+      "title": { "displayName": "Title", "purpose": "Product-card name and cart line items." },
+      "body": { "displayName": "Body", "purpose": "Category captions, spec prose, disclosures. Saira sans, sparingly, never for numbers." },
+      "label": { "displayName": "Label (Silkscreen)", "purpose": "The .silkscreen class: every legend, nav item, tag, filter label. JetBrains Mono 11px, uppercase, 0.1em tracking." },
+      "readout": { "displayName": "Readout", "purpose": "Prices, LED total, cart counter, stock counts. JetBrains Mono, tabular-nums." }
+    },
+    "shadows": [
+      { "name": "faceplate-bezel", "value": "inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(0,0,0,0.25), inset 0 -2px 3px rgba(0,0,0,0.4), 0 1px 0 rgba(0,0,0,0.6)", "purpose": "The .panel module: matte anodized faceplate with a machined edge." },
+      { "name": "faceplate-raised", "value": "inset 0 1px 0 rgba(255,255,255,0.05), 0 1px 2px rgba(0,0,0,0.4)", "purpose": ".panel-raised: rack rails, secondary keys." },
+      { "name": "inset-well", "value": "inset 0 2px 6px rgba(0,0,0,0.6)", "purpose": ".panel-inset: photo wells, fader tracks, LED-counter chips." },
+      { "name": "rivet", "value": "inset 0 0 0 1px rgba(0,0,0,0.7), inset 0 -1px 2px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.6)", "purpose": "Corner rack-screw rivet head." },
+      { "name": "led-shadow", "value": "0 0 2px rgba(255,120,95,0.7)", "purpose": "The only emissive shadow: LEDs, led-dots, segmented readouts. Bright, never bloomed." }
+    ],
+    "motion": [
+      { "name": "state-transition", "value": "transition-all (~150ms) ease", "purpose": "Border-color and background shifts on hover/focus for panels, links, buttons." },
+      { "name": "key-press", "value": "translateY(1px)", "purpose": "Active-state press on buttons and quantity steppers. Nothing lifts." },
+      { "name": "filter-preview", "value": "opacity 0.28 + filter saturate(0.4)", "purpose": "Price Rail live-dims out-of-range product rows during drag, before URL commit." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "container", "value": "64rem (max-w-5xl shop pages)" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single armed action per view (ADD TO CART, PLACE ORDER). Velocity Red fill on near-black ink.",
+      "html": "<button class=\"ds-btn-primary\">ADD TO CART</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 10px; background: var(--ramp-1, #ff3b30); color: #180706; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; border: 1px solid transparent; border-radius: 3px; transition: background 0.15s ease, transform 0.1s ease; } .ds-btn-primary:hover { background: color-mix(in oklch, #ff3b30 80%, transparent); } .ds-btn-primary:focus-visible { outline: 2px solid var(--ring, #ff9a00); outline-offset: 2px; } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary CTAs and the demo Simulate payment action. Panel-black fill, hairline seam border.",
+      "html": "<button class=\"ds-btn-outline\">SIMULATE PAYMENT</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 10px; background: #141414; color: #ECEAE3; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; border: 1px solid #333330; border-radius: 3px; transition: background 0.15s ease, border-color 0.15s ease; } .ds-btn-outline:hover { background: #202023; border-color: #47463f; } .ds-btn-outline:focus-visible { outline: 2px solid #ff9a00; outline-offset: 2px; } .ds-btn-outline:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Catalog search and guest-email field. Transparent fill, field-stroke border, amber focus ring.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Monitors, headphones, cables...\" />",
+      "css": ".ds-input { height: 32px; width: 100%; padding: 4px 10px; background: transparent; color: #ECEAE3; font-family: 'Saira', system-ui, sans-serif; font-size: 14px; border: 1px solid #38372f; border-radius: 4px; outline: none; transition: border-color 0.15s ease, box-shadow 0.15s ease; } .ds-input::placeholder { color: #9c988d; } .ds-input:focus-visible { border-color: #ff9a00; box-shadow: 0 0 0 3px rgba(255,154,0,0.5); }"
+    },
+    {
+      "name": "Silkscreen Nav Link",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Header/footer navigation. Mono uppercase legend in silkscreen grey; no underline, no active pill.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\">All Units</a><a href=\"#\">Studio Monitors</a><a href=\"#\">Headphones</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 20px; } .ds-nav a { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; line-height: 1; color: #9c988d; text-decoration: none; transition: color 0.15s ease; } .ds-nav a:hover { color: #ECEAE3; } .ds-nav a:focus-visible { outline: 2px solid #ff9a00; outline-offset: 2px; }"
+    },
+    {
+      "name": "Variant Chip",
+      "kind": "chip",
+      "refersTo": "chip-variant",
+      "description": "Variant picker key. Selected state uses the rationed amber armed read; unselected is a matte panel key.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip is-selected\">Single</button><button class=\"ds-chip\">Matched Pair</button></div>",
+      "css": ".ds-chips { display: inline-flex; gap: 8px; } .ds-chip { padding: 6px 12px; background: #1c1c1e; color: #9c988d; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; border: 1px solid #333330; border-radius: 2px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease; } .ds-chip:hover { border-color: #47463f; color: #ECEAE3; } .ds-chip.is-selected { background: #1a1103; color: #ff9a00; border-color: #ff9a00; } .ds-chip:focus-visible { outline: 2px solid #ff9a00; outline-offset: 2px; }"
+    },
+    {
+      "name": "Product Faceplate Card",
+      "kind": "card",
+      "refersTo": "card-faceplate",
+      "description": "One product as a full-width rack row: rivets at the corners, recessed mono thumbnail, silkscreen identity, channel-strip readout.",
+      "html": "<a class=\"ds-faceplate\"><span class=\"ds-rivet tl\"></span><span class=\"ds-rivet tr\"></span><span class=\"ds-rivet bl\"></span><span class=\"ds-rivet br\"></span><div class=\"ds-well\"></div><div class=\"ds-id\"><h2>Datum 5 Nearfield Monitor</h2><p>STUDIO MONITORS &nbsp;|&nbsp; Single &middot; Matched Pair</p></div><div class=\"ds-strip\"><span class=\"ds-meter\"><i class=\"lit\"></i><i class=\"lit\"></i><i class=\"lit\"></i><i></i></span><span class=\"ds-price\">From $249.00</span></div></a>",
+      "css": ".ds-faceplate { position: relative; display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 12px 16px; padding: 12px; background: #1c1c1e; border: 1px solid #333330; border-top-color: #3d3d39; border-bottom-color: #131312; border-radius: 0; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(0,0,0,0.25), inset 0 -2px 3px rgba(0,0,0,0.4), 0 1px 0 rgba(0,0,0,0.6); transition: border-color 0.15s ease; } .ds-faceplate:hover { border-color: #47463f; } .ds-rivet { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 34% 28%, #5c5c56, #17171590 62%, #0c0c0b); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.7), inset 0 -1px 2px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.6); } .ds-rivet.tl { left: 8px; top: 8px; } .ds-rivet.tr { right: 8px; top: 8px; } .ds-rivet.bl { left: 8px; bottom: 8px; } .ds-rivet.br { right: 8px; bottom: 8px; } .ds-well { width: 64px; height: 64px; background: #0f0f10; border: 1px solid #2a2a28; box-shadow: inset 0 2px 6px rgba(0,0,0,0.6); } .ds-id h2 { margin: 0; font-family: 'Saira Condensed', 'Saira', sans-serif; font-size: 18px; font-weight: 600; line-height: 1.15; color: #ECEAE3; } .ds-id p { margin: 4px 0 0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #9c988d; } .ds-strip { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-left: 20px; border-left: 1px solid #333330; } .ds-meter { display: inline-flex; gap: 3px; } .ds-meter i { width: 6px; height: 14px; border-radius: 1px; background: #2a2a27; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.5); } .ds-meter i.lit { background: #ff9a00; box-shadow: 0 0 2px rgba(255,120,95,0.7); } .ds-price { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 15px; font-variant-numeric: tabular-nums; color: #ECEAE3; }"
+    },
+    {
+      "name": "LED Readout",
+      "kind": "custom",
+      "refersTo": "led-readout",
+      "description": "Segmented numeric display for the cart counter and order total. Emissive, on a near-black chip.",
+      "html": "<span class=\"ds-led\">$249.00</span>",
+      "css": ".ds-led { display: inline-flex; align-items: center; padding: 4px 8px; background: #0b0b0c; color: #ff5a4b; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 16px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.04em; border-radius: 2px; text-shadow: 0 0 2px rgba(255,120,95,0.7); }"
+    },
+    {
+      "name": "Price Rail (dual fader)",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Signature filter. Dragging a handle live-dims out-of-range product rows and shows a surviving-count readout; release commits min/max to the URL.",
+      "html": "<div class=\"ds-rail\"><div class=\"ds-rail-head\"><span class=\"ds-rail-label\">Price</span><span class=\"ds-rail-range\">$14.00 &ndash; $899.00 <em>19 / 38</em></span></div><div class=\"ds-rail-track\"><div class=\"ds-rail-fill\"></div><span class=\"ds-rail-thumb\" style=\"left:12%\"></span><span class=\"ds-rail-thumb\" style=\"left:78%\"></span></div></div>",
+      "css": ".ds-rail-head { display: flex; align-items: baseline; justify-content: space-between; } .ds-rail-label { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #9c988d; } .ds-rail-range { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-variant-numeric: tabular-nums; color: #ECEAE3; } .ds-rail-range em { margin-left: 8px; font-style: normal; color: #ff9a00; } .ds-rail-track { position: relative; margin-top: 12px; height: 24px; } .ds-rail-track::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 6px; transform: translateY(-50%); border-radius: 1px; background: #0f0f10; box-shadow: inset 0 1px 2px rgba(0,0,0,0.7); } .ds-rail-fill { position: absolute; left: 12%; right: 22%; top: 50%; height: 6px; transform: translateY(-50%); border-radius: 1px; background: rgba(255,154,0,0.7); } .ds-rail-thumb { position: absolute; top: 50%; width: 12px; height: 24px; transform: translate(-50%,-50%); border-radius: 2px; border: 1px solid #47463f; background: #3a3a37; box-shadow: 0 1px 2px rgba(0,0,0,0.6); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Rack",
+    "overview": "The storefront is a loaded 19-inch outboard equipment rack, and every product is a faceplate bolted onto it. The page ground is not a background behind content — it is matte anodized panel metal, edge to edge, carrying fine silkscreen-print grain and a faint corner-to-corner tonal drift so it never reads as one flat hex. The visitor lands looking at inventory, not a hero: five category modules stacked in rack-unit rows between two screw-punched rails, then a NOW LOADED strip of featured units at the fold.\n\nThe world is anti-hype by construction. The audience — audio engineers, producers, studio owners — is measurement-literate and skeptical of marketing gloss, so the interface behaves like their own rack: one number per row, specs ruled inline, unlit means unavailable. The only functional color is the TR-808 velocity ramp (red to white), mapping stock and price tiers. Amber is rationed to armed/active states. Light itself is rationed: LEDs and segmented readouts are the only elements that emit it — no glow, no glass, no gradients on components.\n\nIt explicitly refuses two category defaults: the grid of product photos on white, and the audiophile-black-with-neon cliche. Product imagery (12 shared placeholder shots, an acknowledged asset gap) is deliberately suppressed to dim monochrome reference prints recessed into inset wells, so no photo ever competes with a lit readout.",
+    "keyCharacteristics": [
+      "Panel material is the page ground, full-bleed, with real grain + tonal drift — never a flat fill.",
+      "The 808 velocity ramp (#ff3b30 → #ff9a00 → #ffe100 → #f2f2f2) is the only functional color.",
+      "LEDs and segmented readouts are the only light sources; everything else is matte.",
+      "Silkscreen legend type: Saira Condensed caps for names/numerals, JetBrains Mono for every label, spec, price, and control.",
+      "Modules are near-square panels with rack-screw rivets at the corners and hairline seams; 3px radius on keys only.",
+      "Every filter control visibly marks the modules it governs before it commits."
+    ],
+    "rules": [
+      { "name": "The Only-Light Rule", "body": "LEDs, led-dots, and segmented readouts are the only elements permitted to emit light (a tight 2px shadow, no bloom). No glow on text, borders, buttons, or panels.", "section": "colors" },
+      { "name": "The Rationed Amber Rule", "body": "Amber (#ff9a00) means armed or active — focus, selection, live filter preview, low-stock. It never appears as decoration or as a default accent on a resting surface.", "section": "colors" },
+      { "name": "The Ramp-Is-The-Only-Color Rule", "body": "Hue is functional. If a color isn't mapping a stock or price tier or an active state, it's greyscale. No brand color outside the ramp.", "section": "colors" },
+      { "name": "The Silkscreen Rule", "body": "Any label, spec, price, control text, or nav item is JetBrains Mono, uppercase for labels, wide-tracked at small sizes. Prose sans (Saira) is only for full sentences.", "section": "typography" },
+      { "name": "The Tabular-Numerals Rule", "body": "Every number that a visitor might compare — price, stock, quantity, count — is set tabular-nums so columns align down a rack.", "section": "typography" },
+      { "name": "The No-Lift Rule", "body": "Surfaces never rise. Hover shifts a border to Seam Strong or an accent; :active presses 1px down. If an element looks like it's floating, it's wrong.", "section": "elevation" },
+      { "name": "The Bezel-Not-Shadow Rule", "body": "Depth is built from inset highlights and shadows on the element's own edge. Outward box-shadow is limited to the 1px seating line and the LED bloom.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do make panel material the page ground, full-bleed, with the grain data-URI and the two tonal-drift radial gradients — never a flat #141414 fill.",
+      "Do map every use of hue to the 808 ramp (stock tier, price tier) or to an armed/active state; keep everything else greyscale.",
+      "Do set labels, prices, specs, and controls in JetBrains Mono, uppercase for labels, tabular-nums for anything comparable.",
+      "Do keep the primary catalog as one full-width row per product; let it scale by growing, and design zero-results as an invitation (the lit DeadKeys key).",
+      "Do put rivets at all four corners of a module and hairline seams between stacked rows.",
+      "Do reserve the 3px radius for buttons and steppers; keep panels and cards hard-cornered.",
+      "Do let filter controls preview their effect (dim the governed rows) before committing to the URL."
+    ],
+    "donts": [
+      "Don't add glow, bloom, gradients, or glass to any component — the only emissive shadow is the tight --led-shadow on LEDs and readouts.",
+      "Don't let a surface float or lift on hover; shift a border color or press 1px instead.",
+      "Don't let product photography read as a bright light box — recess it into an inset well and dim it to monochrome.",
+      "Don't use amber as decoration or a default resting accent; it means armed/active only.",
+      "Don't introduce a brand color, a second accent, or a headline typeface outside Saira Condensed / JetBrains Mono / Saira.",
+      "Don't wrap the catalog into a photo grid or add a marketing hero above the rack."
+    ]
+  }
+}

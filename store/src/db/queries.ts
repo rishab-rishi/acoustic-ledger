@@ -10,13 +10,68 @@ export function getCategoryBySlug(slug: string) {
   return db.query.categories.findFirst({ where: eq(categories.slug, slug) });
 }
 
-export function getFeaturedProducts(limit = 6) {
-  return db.query.products.findMany({
+/**
+ * Categories with the counts the storefront "rack" needs on its faceplates:
+ * how many active products, how much stock across their variants, and the
+ * cheapest way in.
+ */
+export async function getCategoriesWithMeta() {
+  const rows = await db
+    .select({
+      id: categories.id,
+      name: categories.name,
+      slug: categories.slug,
+      description: categories.description,
+      productCount: sql<number>`count(distinct ${products.id})::int`,
+      totalStock: sql<number>`coalesce(sum(${variants.stock}), 0)::int`,
+      priceFromCents: sql<number>`coalesce(min(${products.basePriceCents}), 0)::int`,
+    })
+    .from(categories)
+    .leftJoin(
+      products,
+      and(eq(products.categoryId, categories.id), eq(products.active, true))
+    )
+    .leftJoin(variants, eq(variants.productId, products.id))
+    .groupBy(categories.id)
+    .orderBy(asc(categories.name));
+
+  return rows;
+}
+
+/** Fold a product's variants into the stock/price signal a catalog row shows. */
+function withStockSignal<
+  T extends {
+    basePriceCents: number;
+    variants: { name: string; priceCents: number; stock: number }[];
+  },
+>(product: T) {
+  const { variants: variantRows, ...rest } = product;
+  const totalStock = variantRows.reduce((sum, v) => sum + v.stock, 0);
+  const prices = variantRows.map((v) => v.priceCents);
+  const priceMinCents = prices.length ? Math.min(...prices) : product.basePriceCents;
+  const priceMaxCents = prices.length ? Math.max(...prices) : product.basePriceCents;
+  return {
+    ...rest,
+    variantCount: variantRows.length,
+    variantNames: variantRows.map((v) => v.name),
+    totalStock,
+    inStock: totalStock > 0,
+    priceMinCents,
+    priceMaxCents,
+  };
+}
+
+export async function getFeaturedProducts(limit = 6) {
+  const rows = await db.query.products.findMany({
     where: and(eq(products.active, true), eq(products.featured, true)),
     orderBy: desc(products.createdAt),
     limit,
-    with: { category: true },
+    with: {
+      category: true,
+      variants: { columns: { name: true, priceCents: true, stock: true } },
+    },
   });
+  return rows.map(withStockSignal);
 }
 
 export const SORTS = [
@@ -101,11 +156,15 @@ export async function searchProducts(params: SearchParams) {
     maxCents !== undefined ? lte(products.basePriceCents, maxCents) : undefined,
   ].filter(Boolean) as SQL[];
 
-  return db.query.products.findMany({
+  const rows = await db.query.products.findMany({
     where: and(...filters),
     orderBy: orderFor(sort, q),
-    with: { category: true },
+    with: {
+      category: true,
+      variants: { columns: { name: true, priceCents: true, stock: true } },
+    },
   });
+  return rows.map(withStockSignal);
 }
 
 /** Bounds for the price filter's placeholder text. */

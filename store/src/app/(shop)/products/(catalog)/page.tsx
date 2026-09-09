@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
+import { PriceRail } from "@/components/shop/price-rail";
 import { ProductCard } from "@/components/shop/product-card";
+import { DeadKeys, SilkLabel } from "@/components/shop/rack";
 import { SortSelect } from "@/components/shop/sort-select";
 import { Button } from "@/components/ui/button";
 import {
@@ -54,7 +56,7 @@ function FilterChip({ href, children }: { href: string; children: React.ReactNod
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-1.5 border border-border px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+      className="inline-flex items-center gap-1.5 border border-border bg-panel px-2.5 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:border-accent hover:text-foreground"
     >
       {children}
       <X className="size-3" />
@@ -91,95 +93,74 @@ export default async function ProductsPage({
     products.length === 0 && q ? await getSuggestions(q) : [];
 
   const heading = q
-    ? `Results for “${q}”`
-    : (activeCategory?.name ?? "All Products");
+    ? `Results — “${q}”`
+    : (activeCategory?.name ?? "All Units");
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-12">
-      <div className="mb-8">
-        <h1 className="text-2xl font-medium tracking-tight">{heading}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {products.length} {products.length === 1 ? "product" : "products"}
-        </p>
+    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-10">
+      <div className="mb-6 flex items-baseline gap-3">
+        <h1 className="font-condensed text-2xl font-bold uppercase tracking-[0.04em] text-foreground sm:text-3xl">
+          {heading}
+        </h1>
+        <span className="led-readout text-sm">
+          {String(products.length).padStart(2, "0")}
+        </span>
       </div>
 
-      {/* A plain GET form: filters end up in the URL, so results are
+      {/* The channel strip. The price fader marks the rack live (JS); the text
+          boxes are the no-JS path. All of it lands in the URL, so results stay
           shareable and the back button behaves. */}
-      <form action="/products" className="mb-6 flex flex-wrap items-end gap-3">
-        <div className="min-w-56 flex-1">
-          <label
-            htmlFor="q"
-            className="text-xs tracking-wide text-muted-foreground uppercase"
-          >
-            Search
-          </label>
-          <div className="relative mt-1.5">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              id="q"
-              type="search"
-              name="q"
-              defaultValue={q ?? ""}
-              placeholder="Monitors, headphones, cables…"
-              className="h-9 w-full border border-border bg-transparent pr-3 pl-9 text-sm outline-none focus-visible:border-accent"
-            />
+      <div className="panel relative mb-4 grid items-end gap-x-8 gap-y-4 p-4 sm:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        <form action="/products" className="flex items-end gap-2">
+          <div className="flex-1">
+            <label htmlFor="q" className="silkscreen block">
+              Search
+            </label>
+            <div className="relative mt-1.5">
+              <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                id="q"
+                type="search"
+                name="q"
+                defaultValue={q ?? ""}
+                placeholder="Monitors, headphones, cables…"
+                className="panel-inset h-9 w-full pr-3 pl-9 font-mono text-sm text-foreground outline-none focus-visible:border-accent"
+              />
+            </div>
           </div>
-        </div>
+          {category ? (
+            <input type="hidden" name="category" value={category} />
+          ) : null}
+          {sort !== "relevance" ? (
+            <input type="hidden" name="sort" value={sort} />
+          ) : null}
+          {minCents !== undefined ? (
+            <input type="hidden" name="min" value={params.min} />
+          ) : null}
+          {maxCents !== undefined ? (
+            <input type="hidden" name="max" value={params.max} />
+          ) : null}
+          <Button type="submit" size="sm" className="h-9">
+            Go
+          </Button>
+        </form>
 
-        <div>
-          <label
-            htmlFor="min"
-            className="text-xs tracking-wide text-muted-foreground uppercase"
-          >
-            Min price
-          </label>
-          <input
-            id="min"
-            name="min"
-            inputMode="decimal"
-            defaultValue={params.min ?? ""}
-            placeholder={formatCents(priceRange.minCents).replace("$", "")}
-            className="mt-1.5 h-9 w-24 border border-border bg-transparent px-3 font-mono text-sm outline-none focus-visible:border-accent"
-          />
-        </div>
+        <PriceRail
+          params={params}
+          floorCents={priceRange.minCents}
+          ceilCents={priceRange.maxCents}
+        />
+      </div>
 
-        <div>
-          <label
-            htmlFor="max"
-            className="text-xs tracking-wide text-muted-foreground uppercase"
-          >
-            Max price
-          </label>
-          <input
-            id="max"
-            name="max"
-            inputMode="decimal"
-            defaultValue={params.max ?? ""}
-            placeholder={formatCents(priceRange.maxCents).replace("$", "")}
-            className="mt-1.5 h-9 w-24 border border-border bg-transparent px-3 font-mono text-sm outline-none focus-visible:border-accent"
-          />
-        </div>
-
-        {/* Keep the current category and sort when the form submits. */}
-        {category ? <input type="hidden" name="category" value={category} /> : null}
-        {sort !== "relevance" ? (
-          <input type="hidden" name="sort" value={sort} />
-        ) : null}
-
-        <Button type="submit" variant="outline" size="sm" className="h-9">
-          Apply
-        </Button>
-      </form>
-
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap gap-2">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap gap-1.5">
           <Link
             href={catalogHref(params, { category: undefined })}
             className={cn(
-              "border px-3 py-1.5 text-xs tracking-wide uppercase transition-colors",
+              "border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors",
               !category
-                ? "border-foreground bg-foreground text-background"
-                : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
+                ? "border-accent bg-accent/15 text-foreground"
+                : "border-border bg-panel text-muted-foreground hover:border-border-strong hover:text-foreground"
             )}
           >
             All
@@ -189,10 +170,10 @@ export default async function ProductsPage({
               key={c.id}
               href={catalogHref(params, { category: c.slug })}
               className={cn(
-                "border px-3 py-1.5 text-xs tracking-wide uppercase transition-colors",
+                "border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors",
                 category === c.slug
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
+                  ? "border-accent bg-accent/15 text-foreground"
+                  : "border-border bg-panel text-muted-foreground hover:border-border-strong hover:text-foreground"
               )}
             >
               {c.name}
@@ -204,8 +185,8 @@ export default async function ProductsPage({
       </div>
 
       {hasFilters ? (
-        <div className="mb-8 flex flex-wrap items-center gap-2">
-          <span className="text-xs text-muted-foreground">Filters:</span>
+        <div className="mb-6 flex flex-wrap items-center gap-2">
+          <SilkLabel>Patched</SilkLabel>
           {q ? (
             <FilterChip href={catalogHref(params, { q: undefined })}>
               “{q}”
@@ -228,7 +209,7 @@ export default async function ProductsPage({
           ) : null}
           <Link
             href="/products"
-            className="text-xs text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+            className="font-mono text-[11px] text-muted-foreground underline underline-offset-4 transition-colors hover:text-accent"
           >
             Clear all
           </Link>
@@ -236,38 +217,47 @@ export default async function ProductsPage({
       ) : null}
 
       {products.length > 0 ? (
-        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="space-y-3" data-price-scope>
           {products.map((product) => (
-            <ProductCard
+            <div
               key={product.id}
-              slug={product.slug}
-              name={product.name}
-              categoryName={product.category.name}
-              basePriceCents={product.basePriceCents}
-              image={product.images[0]}
-            />
+              data-price={Math.round(product.basePriceCents / 100)}
+              className="transition-[opacity,filter] duration-150"
+            >
+              <ProductCard
+                slug={product.slug}
+                name={product.name}
+                categoryName={product.category.name}
+                basePriceCents={product.basePriceCents}
+                priceMinCents={product.priceMinCents}
+                priceMaxCents={product.priceMaxCents}
+                totalStock={product.totalStock}
+                variantNames={product.variantNames}
+                image={product.images[0]}
+              />
+            </div>
           ))}
         </div>
       ) : (
-        <div className="border border-border px-6 py-16 text-center">
-          <p className="text-sm font-medium">
-            {q ? `Nothing matches “${q}”.` : "No products match those filters."}
+        <div className="panel relative px-6 py-14 text-center">
+          {/* An empty pattern is sixteen dark keys of invitation. */}
+          <DeadKeys />
+          <p className="mt-6 font-condensed text-lg font-semibold uppercase tracking-[0.04em] text-foreground">
+            {q ? `Nothing patched to “${q}”` : "No units match those filters"}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Try a broader price range or a different category.
+          <p className="mt-1 font-sans text-sm text-muted-foreground">
+            Widen the price range or clear a filter to load the rack.
           </p>
 
           {suggestions.length > 0 ? (
             <div className="mt-8">
-              <p className="text-xs tracking-wide text-muted-foreground uppercase">
-                You might mean
-              </p>
+              <SilkLabel>You might mean</SilkLabel>
               <ul className="mt-3 flex flex-wrap justify-center gap-2">
                 {suggestions.map((s) => (
                   <li key={s.id}>
                     <Link
                       href={`/products/${s.slug}`}
-                      className="border border-border px-3 py-1.5 text-xs transition-colors hover:border-foreground"
+                      className="border border-border bg-panel px-3 py-1.5 font-mono text-[11px] text-foreground transition-colors hover:border-accent"
                     >
                       {s.name}
                     </Link>
@@ -277,12 +267,7 @@ export default async function ProductsPage({
             </div>
           ) : null}
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-8"
-            render={<Link href="/products" />}
-          >
+          <Button size="sm" className="mt-8" render={<Link href="/products" />}>
             Clear filters
           </Button>
         </div>
