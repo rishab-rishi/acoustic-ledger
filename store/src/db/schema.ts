@@ -71,16 +71,23 @@ export const accounts = pgTable(
   },
   (account) => [
     primaryKey({ columns: [account.provider, account.providerAccountId] }),
+    // Postgres doesn't index foreign keys automatically. The adapter deletes
+    // by userId on account unlinking/cascade.
+    index("account_user_id_idx").on(account.userId),
   ]
 );
 
-export const sessions = pgTable("session", {
-  sessionToken: text("sessionToken").primaryKey(),
-  userId: uuid("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  expires: timestamp("expires", { mode: "date" }).notNull(),
-});
+export const sessions = pgTable(
+  "session",
+  {
+    sessionToken: text("sessionToken").primaryKey(),
+    userId: uuid("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (t) => [index("session_user_id_idx").on(t.userId)]
+);
 
 export const verificationTokens = pgTable(
   "verificationToken",
@@ -121,20 +128,29 @@ export const products = pgTable(
     ),
     ...timestamps,
   },
-  (t) => [index("products_search_idx").using("gin", t.searchVector)]
+  (t) => [
+    index("products_search_idx").using("gin", t.searchVector),
+    // Every catalog row's category filter and stock signal join through
+    // this.
+    index("products_category_id_idx").on(t.categoryId),
+  ]
 );
 
-export const variants = pgTable("variants", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  productId: uuid("product_id")
-    .notNull()
-    .references(() => products.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  sku: text("sku").notNull().unique(),
-  priceCents: integer("price_cents").notNull(),
-  stock: integer("stock").notNull().default(0),
-  ...timestamps,
-});
+export const variants = pgTable(
+  "variants",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    sku: text("sku").notNull().unique(),
+    priceCents: integer("price_cents").notNull(),
+    stock: integer("stock").notNull().default(0),
+    ...timestamps,
+  },
+  (t) => [index("variants_product_id_idx").on(t.productId)]
+);
 
 // --- Cart ---
 
@@ -174,55 +190,79 @@ export const cartItems = pgTable(
     qty: integer("qty").notNull(),
     ...timestamps,
   },
-  (t) => [unique().on(t.cartId, t.variantId)]
+  (t) => [
+    unique().on(t.cartId, t.variantId),
+    index("cart_items_variant_id_idx").on(t.variantId),
+  ]
 );
 
 // --- Orders ---
 
-export const addresses = pgTable("addresses", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => users.id),
-  line1: text("line1").notNull(),
-  line2: text("line2"),
-  city: text("city").notNull(),
-  region: text("region").notNull(),
-  postal: text("postal").notNull(),
-  country: text("country").notNull(),
-  ...timestamps,
-});
+export const addresses = pgTable(
+  "addresses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    line1: text("line1").notNull(),
+    line2: text("line2"),
+    city: text("city").notNull(),
+    region: text("region").notNull(),
+    postal: text("postal").notNull(),
+    country: text("country").notNull(),
+    ...timestamps,
+  },
+  (t) => [index("addresses_user_id_idx").on(t.userId)]
+);
 
-export const orders = pgTable("orders", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id),
-  email: text("email").notNull(),
-  status: orderStatusEnum("status").notNull().default("pending"),
-  subtotalCents: integer("subtotal_cents").notNull(),
-  shippingCents: integer("shipping_cents").notNull(),
-  totalCents: integer("total_cents").notNull(),
-  // Unknown until PayPal responds: the order row is created first so its id
-  // can travel as the PayPal order's custom_id, then this is filled in.
-  paypalOrderId: text("paypal_order_id").unique(),
-  paypalCaptureId: text("paypal_capture_id"),
-  shippingAddress: jsonb("shipping_address"),
-  ...timestamps,
-});
+export const orders = pgTable(
+  "orders",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").references(() => users.id),
+    email: text("email").notNull(),
+    status: orderStatusEnum("status").notNull().default("pending"),
+    subtotalCents: integer("subtotal_cents").notNull(),
+    shippingCents: integer("shipping_cents").notNull(),
+    totalCents: integer("total_cents").notNull(),
+    // Unknown until PayPal responds: the order row is created first so its
+    // id can travel as the PayPal order's custom_id, then this is filled in.
+    paypalOrderId: text("paypal_order_id").unique(),
+    paypalCaptureId: text("paypal_capture_id"),
+    shippingAddress: jsonb("shipping_address"),
+    ...timestamps,
+  },
+  (t) => [
+    // The whole /orders page.
+    index("orders_user_id_idx").on(t.userId),
+    // The admin order list filters by status and sorts by recency.
+    index("orders_status_created_at_idx").on(t.status, t.createdAt),
+  ]
+);
 
-export const orderItems = pgTable("order_items", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  orderId: uuid("order_id")
-    .notNull()
-    .references(() => orders.id, { onDelete: "cascade" }),
-  variantId: uuid("variant_id").references(() => variants.id, {
-    onDelete: "set null",
-  }),
-  productName: text("product_name").notNull(),
-  variantName: text("variant_name").notNull(),
-  unitPriceCents: integer("unit_price_cents").notNull(),
-  qty: integer("qty").notNull(),
-  ...timestamps,
-});
+export const orderItems = pgTable(
+  "order_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orderId: uuid("order_id")
+      .notNull()
+      .references(() => orders.id, { onDelete: "cascade" }),
+    variantId: uuid("variant_id").references(() => variants.id, {
+      onDelete: "set null",
+    }),
+    productName: text("product_name").notNull(),
+    variantName: text("variant_name").notNull(),
+    unitPriceCents: integer("unit_price_cents").notNull(),
+    qty: integer("qty").notNull(),
+    ...timestamps,
+  },
+  (t) => [
+    // Every order view and every settlement.
+    index("order_items_order_id_idx").on(t.orderId),
+    index("order_items_variant_id_idx").on(t.variantId),
+  ]
+);
 
 // --- Relations ---
 

@@ -29,6 +29,13 @@
       "when": 1786728296070,
       "tag": "0003_add_paypal_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789414021673,
+      "tag": "0004_glossy_tempest",
+      "breakpoints": true
     }
   ]
 }
