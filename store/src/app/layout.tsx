@@ -27,6 +27,8 @@ export const metadata: Metadata = {
   },
   description:
     "High-fidelity studio monitors, headphones, and equalizers tuned for a balanced profile — accurate, not overpowering.",
+  authors: [{ name: "Cold-Start" }],
+  creator: "Cold-Start",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

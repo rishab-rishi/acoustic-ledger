@@ -58,10 +58,21 @@ export async function Footer() {
       </div>
 
       <div className="border-t border-border px-6 py-4">
-        <p className="mx-auto flex max-w-6xl items-center gap-2 font-mono text-xs text-muted-foreground">
-          <span className="led-dot" aria-hidden />
-          Demo store — payments run in the PayPal sandbox. No real charges.
-        </p>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 font-mono text-xs text-muted-foreground">
+          <p className="flex items-center gap-2">
+            <span className="led-dot" aria-hidden />
+            Demo store — payments run in the PayPal sandbox. No real charges.
+          </p>
+          <div className="flex items-center gap-4">
+            <Link href="/terms" className="transition-colors hover:text-accent">
+              Terms
+            </Link>
+            <Link href="/privacy" className="transition-colors hover:text-accent">
+              Privacy
+            </Link>
+            <span>© {new Date().getFullYear()} Cold-Start</span>
+          </div>
+        </div>
       </div>
     </footer>
   );
