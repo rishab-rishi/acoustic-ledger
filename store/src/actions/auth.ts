@@ -51,6 +51,14 @@ export async function registerUser(input: unknown): Promise<ActionResult> {
 
     return { ok: true };
   } catch (err) {
+    // The find-then-insert above isn't atomic; two requests for the same
+    // email can both pass the existence check and race to insert. The
+    // unique index on users.email keeps the data correct either way, but
+    // without this the race's loser got a generic failure instead of the
+    // accurate "already exists" — same message the non-racing path returns.
+    if ((err as { code?: string })?.code === "23505") {
+      return { ok: false, error: "An account with that email already exists." };
+    }
     console.error("[auth] registerUser failed:", err);
     return { ok: false, error: "Couldn't create your account. Try again." };
   }
