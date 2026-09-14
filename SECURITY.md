@@ -56,10 +56,145 @@ serves the detailed body — but you lose the diagnostic.
 
 ---
 
+---
+
+## Phase 2 — Abuse resistance and DDoS mitigation
+
+Read this before touching the numbers below: **nothing here prevents a DDoS.**
+A large enough flood overwhelms any origin, on any plan. What this phase does
+is raise the cost of attacking, keep as much traffic as possible off the
+database and off your own functions, and cap the bill when an attack happens
+anyway. It's risk reduction, not immunity.
+
+### This project is on Vercel **Hobby**
+
+Confirmed with the user. Hobby gets **one** rate-limit rule per project (plus
+three custom firewall rules total), 1,000,000 included allowed requests,
+IP or JA4-digest keying, fixed-window algorithm, 10s–10min window. Counters
+are **per region** — traffic spread across regions can exceed the configured
+limit in aggregate, so the number below has headroom built in for that.
+
+### Task 2.2 — the one WAF rate-limit rule
+
+With only one rule available, it protects the expensive **write** paths, not
+the catalog (Task 5's caching work is what protects the catalog). Apply in
+**Log** action first, watch Firewall → Overview for a day of real traffic
+patterns, then switch to **Deny**.
+
+| Rule | Condition | Window | Limit | Key | Action (start → steady state) |
+|---|---|---|---|---|---|
+| Write-path throttle | Path starts with `/api/` OR path equals `/register` | 60s | 60 requests | IP | Log → Deny |
+
+Why this shape: `/api/*` already covers PayPal capture, the demo-checkout
+fallback, the webhook, and NextAuth's credentials callback
+(`/api/auth/callback/credentials`, i.e. sign-in). `/register` is a Server
+Action, which POSTs to the page URL it's called from, not a `/api/*` route,
+so it needs naming explicitly. The catalog (`/products*`) and everything
+under `(shop)` is deliberately **not** matched — Hobby's single rule has to
+be spent on the paths that cost money or CPU per request, and the catalog's
+real fix is caching (Task 5.2), not rate limiting.
+
+If the project ever moves to Pro (40 rules), split this into the full table
+from `CLAUDE-CODE-TASKS.md` §2.2 — sign-in, registration, capture, and
+demo-checkout each keyed and limited separately, plus a `/products*`
+Challenge rule as defense in depth on top of the CDN caching.
+
+**Configured in Vercel dashboard → Project → Firewall → Configure → New
+Rule → Publish. Not in this repository, not version-controlled, and it
+drifts silently from this table if changed there — re-sync this file by
+hand if the dashboard rule changes.**
+
+### Task 2.3 — application-level rate limiting
+
+Done in code — see `src/lib/rate-limit.ts` and its call sites. This is the
+second layer: the WAF above is per-IP/per-region and can't express "five
+failed attempts for *this account*"; the application layer buckets by
+account or cart instead.
+
+- Uses `@vercel/firewall`'s `checkRateLimit()`, which needs a **matching
+  rate-limit rule created in the dashboard** carrying the `@vercel/firewall`
+  condition and the rate-limit ID used in code. Until that dashboard rule
+  exists, `checkRateLimit()` fails (network/config error) — and per the
+  brief's explicit instruction, a limiter that can't reach its backing rule
+  **fails open**, so the app keeps working with no limiting rather than
+  taking checkout offline. **This means Task 2.3 has no real effect until
+  the dashboard rule below is created.**
+
+| Rate-limit ID (used in code) | Suggested limit | Key |
+|---|---|---|
+| `auth-attempt` | 10 / 60s | `login:<lowercased email>` |
+| `register-attempt` | 5 / 600s | IP |
+| `paypal-capture` | 20 / 60s | IP |
+| `demo-checkout` | 10 / 60s | IP |
+
+Create each as a Firewall rule with the `@vercel/firewall` condition
+(Vercel dashboard → Firewall → Configure → New Rule → Rate Limit →
+"Algorithm: Application-Managed" or equivalent for the installed SDK
+version — the exact UI label may differ; look for the option tied to
+`@vercel/firewall`'s `checkRateLimit`) using the matching ID from the table.
+
+### Task 2.4 — email-enumeration message: left as-is (user decision)
+
+`registerUser` still returns "An account with that email already exists."
+**Decision, discussed with the user:** leave it. Task 2.3's per-account
+rate limit already makes mass enumeration expensive, and for a demo
+storefront with no real user base to protect, a clear signup error
+outweighs closing this oracle. Revisit if this ever handles real user data —
+the fix is a generic success-style response plus (out of scope here, no
+email sending is wired up) a "someone tried to register with your address"
+notice to the real owner.
+
+### Task 5.6 — oversell/restock fix: chosen (see Phase 5 section below)
+
+**Decision, discussed with the user:** record the actual quantity
+decremented rather than refusing to settle on insufficient stock — never
+rejects money PayPal already captured. Implemented in Phase 5.
+
+---
+
+## Phase 3 — Blast radius and cost control
+
+### Task 3.2 — spend and usage caps (dashboard-only)
+
+- [ ] Vercel → Project → Settings → Billing (or the team's Billing page) →
+      set a spend/usage limit.
+- [ ] Enable usage notifications so an absorbed attack shows up as an alert,
+      not a surprise invoice.
+
+### Task 3.3 — incident runbook
+
+**If the site is under unusual load or a suspected attack:**
+
+1. **Look**: Vercel dashboard → Firewall → Overview, grouped by the custom
+   rule from Task 2.2, to see what's actually being hit and from where.
+2. **Emergency lever**: Firewall → **Attack Challenge Mode** — a one-click
+   toggle that challenges *all* incoming traffic. Free on every plan.
+   Degrades the experience for real visitors (they see a challenge page), so
+   treat it as a minutes-to-hours tool, not a setting to leave on.
+3. **Follow-up**: once Overview shows where traffic is concentrated, IP and
+   country blocking (Firewall → Configure) are free on all plans and are the
+   targeted alternative to leaving Challenge Mode on indefinitely.
+4. **Confirm the database survived**: `GET /api/health` with the
+   `x-health-token` header (see above), and check the Postgres provider's own
+   connection-count graph (Neon dashboard, if that's where production lives).
+5. **Before un-mitigating, capture evidence**: screenshot the Firewall
+   Overview traffic breakdown and note timestamps, so the incident can be
+   reviewed afterwards — this is also what you'd hand to Vercel support or
+   use to justify a plan/rule change.
+6. **Who to contact**: *(fill in — this repo doesn't know your on-call or
+   support arrangement.)*
+
+---
+
 ## Dashboard checklist (cannot be done from this repo)
 
 - [ ] Set `HEALTH_TOKEN` in Vercel → Project → Settings → Environment
       Variables (Production, and Preview if used).
 - [ ] Verify the CSP per the walkthrough above, then set `CSP_ENFORCE=1`.
-- [ ] *(Phase 2/3 add more items here — Firewall rules, spend caps, Attack
-      Challenge Mode runbook.)*
+- [ ] Create the Task 2.2 WAF rate-limit rule (Hobby: the one write-path
+      rule above). Start in Log, confirm no false positives, switch to Deny.
+- [ ] Create the four Task 2.3 `@vercel/firewall` rules so
+      `checkRateLimit()` in the app actually limits anything.
+- [ ] Set a spend/usage cap and enable usage notifications (Task 3.2).
+- [ ] Fill in the "who to contact" line in the incident runbook above.
+- [ ] *(Phase 4 adds license/legal items here.)*
