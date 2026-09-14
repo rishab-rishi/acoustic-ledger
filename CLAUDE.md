@@ -53,10 +53,12 @@ the command points a script at production without editing any file.
 
 ### Environment
 
-`.env.local` is committed (it holds sandbox-only secrets) and already points `DATABASE_URL` at
-the Docker Postgres. `.env.example` documents every variable. `NEXT_PUBLIC_*` values are inlined
-at build time. Google OAuth is optional — `auth.ts` only registers the provider when both
-`AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` are set.
+`store/.gitignore` ignores `.env*` except `.env.example`, so `.env.local` (sandbox-only secrets,
+already pointing `DATABASE_URL` at the Docker Postgres) is **not** committed — it must exist
+locally (or be provisioned in the deploy environment) before `dev`/`build`/scripts will work.
+`.env.example` documents every variable with an empty or placeholder value. `NEXT_PUBLIC_*` values
+are inlined at build time. Google OAuth is optional — `auth.ts` only registers the provider when
+both `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` are set.
 
 Seeded logins: `admin@demo.test` / `admin123`, `customer@demo.test` / `customer123`.
 
