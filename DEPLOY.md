@@ -81,6 +81,7 @@ Vercel → Project → Settings → Environment Variables. Set for **Production*
 | `PAYPAL_WEBHOOK_ID` | leave empty until step 5 |
 | `DEMO_CHECKOUT_FALLBACK` | `1` to expose the "Simulate payment" button |
 | `HEALTH_TOKEN` | a random string; generate one, e.g. `openssl rand -hex 32` |
+| `CRON_SECRET` | a random string, same as `HEALTH_TOKEN` |
 
 > **Set `HEALTH_TOKEN` before you rely on `/api/health`.** Without it — or with
 > a request missing/mismatching `x-health-token` — the route returns only
@@ -88,6 +89,14 @@ Vercel → Project → Settings → Environment Variables. Set for **Production*
 > shows when authenticated. Leaving it unset is safe (the route just never
 > serves the detailed body) but you lose the diagnostic. Pass the header as
 > `curl -H "x-health-token: $HEALTH_TOKEN" https://<your-app>.vercel.app/api/health`.
+
+> **Set `CRON_SECRET` for the pending-order sweep to run at all.**
+> `store/vercel.json` schedules `GET /api/cron/sweep-pending-orders` daily —
+> Vercel calls it with `Authorization: Bearer $CRON_SECRET` automatically once
+> the env var exists. Unlike `HEALTH_TOKEN`, leaving this unset does not
+> degrade gracefully: the route 404s and abandoned `pending` orders (one per
+> PayPal-button click that's never completed) accumulate forever instead of
+> being swept after ~24h.
 
 > **Generate a new `AUTH_SECRET`.** Don't reuse the development one. It signs
 > session JWTs; a leaked dev secret would let anyone mint a session — including
