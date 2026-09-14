@@ -72,6 +72,7 @@ export async function getOrCreateCartId(): Promise<string> {
   (await cookies()).set(CART_COOKIE, newToken, {
     httpOnly: true,
     sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
     path: "/",
     maxAge: THIRTY_DAYS,
   });
