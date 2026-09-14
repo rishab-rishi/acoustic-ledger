@@ -1,4 +1,4 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { db } from "@/db";
@@ -86,7 +86,13 @@ export async function getCart() {
   return db.query.carts.findFirst({
     where: eq(carts.id, cartId),
     with: {
-      items: { with: { variant: { with: { product: true } } } },
+      // No orderBy left the row order to whatever Postgres happened to
+      // return, which could reshuffle between renders while someone was
+      // editing quantities.
+      items: {
+        orderBy: asc(cartItems.createdAt),
+        with: { variant: { with: { product: true } } },
+      },
     },
   });
 }
