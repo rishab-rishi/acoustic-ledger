@@ -186,6 +186,31 @@ rejects money PayPal already captured. Implemented in Phase 5.
 
 ---
 
+## Phase 4 — Scraping and reuse (Task 4.3)
+
+`src/app/robots.ts` allows normal search crawlers and disallows
+authenticated/action routes (`/admin`, `/orders`, `/cart`, `/checkout`,
+`/api`) for everyone, plus — confirmed with the user — a block list of known
+AI-training crawler user agents (GPTBot, CCBot, ClaudeBot, Google-Extended,
+and others; see the file for the full list). **This is a request, not
+enforcement**: a well-behaved crawler honors `robots.txt`, a badly-behaved
+one ignores it entirely. The one thing that actually *prevents* a form of
+reuse is `X-Frame-Options: DENY` + CSP `frame-ancestors 'none'` from Task
+1.5, which stops the site being framed into someone else's page at the
+browser level regardless of what any crawler chooses to respect.
+
+**Explicitly not implemented, and won't be if asked**: right-click blocking,
+text-selection blocking, or similar client-side "protection". It doesn't
+stop copying (view-source, network tab, and save-as all bypass it trivially),
+it breaks accessibility and keyboard use, and it reads as broken rather than
+protected.
+
+**Optional dashboard addition** (not applied, free on all Vercel plans):
+Firewall → Configure → a custom rule blocking known scraper user agents,
+alongside the Task 2.2 rule.
+
+---
+
 ## Dashboard checklist (cannot be done from this repo)
 
 - [ ] Set `HEALTH_TOKEN` in Vercel → Project → Settings → Environment
@@ -197,4 +222,5 @@ rejects money PayPal already captured. Implemented in Phase 5.
       `checkRateLimit()` in the app actually limits anything.
 - [ ] Set a spend/usage cap and enable usage notifications (Task 3.2).
 - [ ] Fill in the "who to contact" line in the incident runbook above.
+- [ ] Optional: a Firewall rule blocking known scraper user agents (Task 4.3).
 - [ ] *(Phase 4 adds license/legal items here.)*
