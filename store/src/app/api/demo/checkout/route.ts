@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
+import { PRODUCTS_CACHE_TAG } from "@/db/queries";
 import { getCartId } from "@/lib/cart";
 import {
   DEMO_CAPTURE_PREFIX,
@@ -68,12 +70,13 @@ export async function POST(req: Request) {
       `[demo-checkout] settling order ${pending.order.id} without payment (${captureId})`
     );
 
-    await settleOrder({
+    const outcome = await settleOrder({
       orderId: pending.order.id,
       captureId,
       cartId,
       shippingAddress: DEMO_SHIPPING_ADDRESS,
     });
+    if (outcome.settled) revalidateTag(PRODUCTS_CACHE_TAG, { expire: 0 });
 
     return Response.json({ ok: true, orderId: pending.order.id });
   } catch (err) {

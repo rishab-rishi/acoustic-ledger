@@ -3,8 +3,22 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Gallery } from "@/components/shop/gallery";
 import { VariantPicker } from "@/components/shop/variant-picker";
-import { getProductBySlug } from "@/db/queries";
+import { getCachedProductBySlug } from "@/db/cached-queries";
 import { formatCents } from "@/lib/format";
+
+// Tried generateStaticParams() returning [] to get ISR's "render on first
+// request, then serve from cache" behavior without a build-time database
+// call. It doesn't work here: the (shop) layout's <Header> reads the guest
+// cart cookie (cookies()) to show the cart-count badge on every page in this
+// route group, and that's a request-time API — Next refuses to produce a
+// static shell for a page whose own layout is request-dependent
+// (DYNAMIC_SERVER_USAGE, reproduced against a production build). Decoupling
+// the header's cart badge from cookies() to unblock that is a bigger, more
+// invasive change than this task's scope, so this page stays a dynamic
+// render — but getCachedProductBySlug()'s tag-based Data Cache (see
+// db/cached-queries.ts) still keeps the actual database query off the hot
+// path, which is the change that matters for load.
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -12,7 +26,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getCachedProductBySlug(slug);
   if (!product) return {};
   return {
     title: product.name,
@@ -26,7 +40,7 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getCachedProductBySlug(slug);
   if (!product) notFound();
 
   const prices = product.variants.map((v) => v.priceCents);

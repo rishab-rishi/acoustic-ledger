@@ -7,14 +7,13 @@ import { DeadKeys, SilkLabel } from "@/components/shop/rack";
 import { SortSelect } from "@/components/shop/sort-select";
 import { Button } from "@/components/ui/button";
 import {
-  DEFAULT_PAGE_SIZE,
-  getCategories,
-  getCategoryBySlug,
-  getPriceRange,
-  getSuggestions,
-  isSort,
-  searchProducts,
-} from "@/db/queries";
+  getCachedCategories,
+  getCachedCategoryBySlug,
+  getCachedPriceRange,
+  getCachedSuggestions,
+  searchProductsCached,
+} from "@/db/cached-queries";
+import { DEFAULT_PAGE_SIZE, isSort } from "@/db/queries";
 import { type CatalogParams, catalogHref } from "@/lib/catalog-url";
 import { formatCents, parseDollarsToCents } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -39,7 +38,7 @@ export async function generateMetadata({
   }
 
   if (category) {
-    const found = await getCategoryBySlug(category);
+    const found = await getCachedCategoryBySlug(category);
     if (found) {
       return {
         title: found.name,
@@ -87,8 +86,8 @@ export default async function ProductsPage({
   const page = Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : 1;
 
   const [categories, { products, total }, priceRange] = await Promise.all([
-    getCategories(),
-    searchProducts({
+    getCachedCategories(),
+    searchProductsCached({
       q,
       category,
       minCents,
@@ -97,7 +96,7 @@ export default async function ProductsPage({
       limit: DEFAULT_PAGE_SIZE,
       offset: (page - 1) * DEFAULT_PAGE_SIZE,
     }),
-    getPriceRange(),
+    getCachedPriceRange(),
   ]);
   const pageCount = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
 
@@ -106,7 +105,7 @@ export default async function ProductsPage({
 
   // Only worth a round trip when the search itself came back empty — not
   // just this page of it.
-  const suggestions = total === 0 && q ? await getSuggestions(q) : [];
+  const suggestions = total === 0 && q ? await getCachedSuggestions(q) : [];
 
   const heading = q
     ? `Results — “${q}”`

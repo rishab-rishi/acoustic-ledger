@@ -1,9 +1,10 @@
 "use server";
 
 import { and, eq, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
+import { PRODUCTS_CACHE_TAG } from "@/db/queries";
 import { orderItems, orders, variants } from "@/db/schema";
 import type { ActionResult } from "@/lib/action-result";
 import { adminGuard } from "@/lib/admin";
@@ -125,7 +126,11 @@ export async function cancelOrder(input: unknown): Promise<ActionResult> {
       default:
         refresh(orderId);
         // Stock moved, so the storefront's availability is now stale.
-        if (result.restocked) revalidatePath("/products", "layout");
+        if (result.restocked) {
+          revalidatePath("/products", "layout");
+          // {expire: 0}: restocked availability must not show stale-sold-out.
+          revalidateTag(PRODUCTS_CACHE_TAG, { expire: 0 });
+        }
         return {
           ok: true,
           notice: result.restocked

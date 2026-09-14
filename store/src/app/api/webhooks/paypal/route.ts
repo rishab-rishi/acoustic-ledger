@@ -1,5 +1,7 @@
 import { eq } from "drizzle-orm";
+import { revalidateTag } from "next/cache";
 import { db } from "@/db";
+import { PRODUCTS_CACHE_TAG } from "@/db/queries";
 import { orders } from "@/db/schema";
 import { paypalAmountToCents, paypalFetch } from "@/lib/paypal";
 import { settleOrder } from "@/lib/settle-order";
@@ -103,6 +105,8 @@ export async function POST(req: Request) {
       captureId: event.resource?.id ?? null,
       cartId: null,
     });
+
+    if (outcome.settled) revalidateTag(PRODUCTS_CACHE_TAG, { expire: 0 });
 
     return Response.json({ received: true, settled: outcome.settled });
   } catch (err) {

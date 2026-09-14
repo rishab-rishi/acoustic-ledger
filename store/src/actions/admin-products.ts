@@ -1,9 +1,10 @@
 "use server";
 
 import { count, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
+import { PRODUCTS_CACHE_TAG } from "@/db/queries";
 import { cartItems, products, variants } from "@/db/schema";
 import type { ActionResult } from "@/lib/action-result";
 import { adminGuard } from "@/lib/admin";
@@ -19,6 +20,13 @@ function refresh(productSlug?: string) {
   revalidatePath("/products");
   revalidatePath("/", "layout");
   if (productSlug) revalidatePath(`/products/${productSlug}`);
+  // revalidatePath alone only busts the route render cache — the catalog's
+  // own data reads (getCachedCategories, searchProductsCached, etc.) go
+  // through Next's separate Data Cache, which only this tag clears.
+  // {expire: 0}, not the recommended "max" stale-while-revalidate profile:
+  // an admin who just edited a product expects to see it land immediately,
+  // not serve one more stale response first.
+  revalidateTag(PRODUCTS_CACHE_TAG, { expire: 0 });
 }
 
 /**

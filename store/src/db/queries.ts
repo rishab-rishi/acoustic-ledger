@@ -2,6 +2,19 @@ import { type SQL, and, asc, desc, eq, gte, ilike, lte, or, sql } from "drizzle-
 import { db } from "./index";
 import { categories, products, variants } from "./schema";
 
+/**
+ * Cache tag shared by every catalog read used on the public /products and
+ * /products/[slug] pages (see db/cached-queries.ts). One flat tag rather than
+ * per-product tags: the catalog is small, and a single tag that's easy to
+ * remember to invalidate beats fine-grained tags that are easy to miss.
+ * Invalidated from src/actions/admin-products.ts on every product edit, and
+ * from the three places stock actually changes (settlement in the capture
+ * route, the demo-checkout route and the webhook route; restocking in
+ * cancelOrder). A time-based revalidate is the backstop for anything that
+ * isn't wired to the tag.
+ */
+export const PRODUCTS_CACHE_TAG = "products";
+
 export function getCategories() {
   return db.query.categories.findMany({ orderBy: asc(categories.name) });
 }

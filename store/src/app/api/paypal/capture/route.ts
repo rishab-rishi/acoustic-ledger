@@ -1,6 +1,8 @@
 import { eq } from "drizzle-orm";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
+import { PRODUCTS_CACHE_TAG } from "@/db/queries";
 import { orders } from "@/db/schema";
 import { getCartId } from "@/lib/cart";
 import { paypalAmountToCents, paypalFetch } from "@/lib/paypal";
@@ -143,6 +145,12 @@ export async function POST(req: Request) {
           }
         : null,
     });
+
+    // Stock only actually moved if this call was the one that settled it —
+    // an already-settled order (the capture/webhook race) changed nothing.
+    // {expire: 0}: the buyer (or the next visitor) must not see stock that
+    // was just sold still reported as available.
+    if (outcome.settled) revalidateTag(PRODUCTS_CACHE_TAG, { expire: 0 });
 
     return Response.json({
       ok: true,
