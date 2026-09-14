@@ -88,12 +88,25 @@ export function isSort(value: string | undefined): value is ProductSort {
   return !!value && (SORTS as readonly string[]).includes(value);
 }
 
+/**
+ * At 38 seeded products, no limit is invisible. At scale it's the cheapest
+ * way for one request to cost a full table scan and a multi-megabyte RSC
+ * payload — so the cap is enforced inside searchProducts() itself,
+ * regardless of what a caller (or a hand-typed `?limit=100000`, if a page
+ * ever exposes one) asks for. This is the security-relevant half of
+ * pagination; don't relax it without re-reading CLAUDE-CODE-TASKS.md §5.1.
+ */
+export const DEFAULT_PAGE_SIZE = 20;
+export const MAX_PAGE_SIZE = 60;
+
 export type SearchParams = {
   q?: string;
   category?: string;
   minCents?: number;
   maxCents?: number;
   sort?: ProductSort;
+  limit?: number;
+  offset?: number;
 };
 
 /**
@@ -139,10 +152,15 @@ function orderFor(sort: ProductSort, q?: string) {
 export async function searchProducts(params: SearchParams) {
   const { q, category, minCents, maxCents, sort = "relevance" } = params;
 
+  // Clamped unconditionally — never trust a caller's limit, whatever its
+  // source. A negative/NaN/oversized offset just clamps to 0.
+  const limit = Math.min(Math.max(1, params.limit ?? DEFAULT_PAGE_SIZE), MAX_PAGE_SIZE);
+  const offset = Math.max(0, params.offset ?? 0);
+
   let categoryId: string | undefined;
   if (category) {
     const found = await getCategoryBySlug(category);
-    if (!found) return [];
+    if (!found) return { products: [], total: 0 };
     categoryId = found.id;
   }
 
@@ -155,16 +173,23 @@ export async function searchProducts(params: SearchParams) {
     minCents !== undefined ? gte(products.basePriceCents, minCents) : undefined,
     maxCents !== undefined ? lte(products.basePriceCents, maxCents) : undefined,
   ].filter(Boolean) as SQL[];
+  const where = and(...filters);
 
-  const rows = await db.query.products.findMany({
-    where: and(...filters),
-    orderBy: orderFor(sort, q),
-    with: {
-      category: true,
-      variants: { columns: { name: true, priceCents: true, stock: true } },
-    },
-  });
-  return rows.map(withStockSignal);
+  const [rows, [countRow]] = await Promise.all([
+    db.query.products.findMany({
+      where,
+      orderBy: orderFor(sort, q),
+      limit,
+      offset,
+      with: {
+        category: true,
+        variants: { columns: { name: true, priceCents: true, stock: true } },
+      },
+    }),
+    db.select({ n: sql<number>`count(*)::int` }).from(products).where(where),
+  ]);
+
+  return { products: rows.map(withStockSignal), total: countRow?.n ?? 0 };
 }
 
 /** Bounds for the price filter's placeholder text. */

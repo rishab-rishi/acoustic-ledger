@@ -7,6 +7,7 @@ import { DeadKeys, SilkLabel } from "@/components/shop/rack";
 import { SortSelect } from "@/components/shop/sort-select";
 import { Button } from "@/components/ui/button";
 import {
+  DEFAULT_PAGE_SIZE,
   getCategories,
   getCategoryBySlug,
   getPriceRange,
@@ -79,18 +80,33 @@ export default async function ProductsPage({
   const minCents = params.min ? (parseDollarsToCents(params.min) ?? undefined) : undefined;
   const maxCents = params.max ? (parseDollarsToCents(params.max) ?? undefined) : undefined;
 
-  const [categories, products, priceRange] = await Promise.all([
+  // A garbage or missing ?page just means page 1 — never an error page.
+  // searchProducts() clamps its own limit regardless, but there's no reason
+  // to ask for a negative or absurd offset in the first place.
+  const rawPage = Number.parseInt(params.page ?? "1", 10);
+  const page = Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : 1;
+
+  const [categories, { products, total }, priceRange] = await Promise.all([
     getCategories(),
-    searchProducts({ q, category, minCents, maxCents, sort }),
+    searchProducts({
+      q,
+      category,
+      minCents,
+      maxCents,
+      sort,
+      limit: DEFAULT_PAGE_SIZE,
+      offset: (page - 1) * DEFAULT_PAGE_SIZE,
+    }),
     getPriceRange(),
   ]);
+  const pageCount = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
 
   const activeCategory = categories.find((c) => c.slug === category);
   const hasFilters = Boolean(q || category || minCents !== undefined || maxCents !== undefined);
 
-  // Only worth a round trip when the search itself came back empty.
-  const suggestions =
-    products.length === 0 && q ? await getSuggestions(q) : [];
+  // Only worth a round trip when the search itself came back empty — not
+  // just this page of it.
+  const suggestions = total === 0 && q ? await getSuggestions(q) : [];
 
   const heading = q
     ? `Results — “${q}”`
@@ -103,7 +119,7 @@ export default async function ProductsPage({
           {heading}
         </h1>
         <span className="led-readout text-sm">
-          {String(products.length).padStart(2, "0")}
+          {String(total).padStart(2, "0")}
         </span>
       </div>
 
@@ -238,6 +254,22 @@ export default async function ProductsPage({
             </div>
           ))}
         </div>
+      ) : total > 0 ? (
+        <div className="panel relative px-6 py-14 text-center">
+          <p className="font-condensed text-lg font-semibold uppercase tracking-[0.04em] text-foreground">
+            Nothing on page {page}
+          </p>
+          <p className="mt-1 font-sans text-sm text-muted-foreground">
+            There {total === 1 ? "is" : "are"} only {pageCount}{" "}
+            {pageCount === 1 ? "page" : "pages"} of results.
+          </p>
+          <Link
+            href={catalogHref(params, { page: undefined })}
+            className="mt-6 inline-block font-mono text-[11px] uppercase tracking-[0.12em] text-accent underline underline-offset-4"
+          >
+            Back to page 1
+          </Link>
+        </div>
       ) : (
         <div className="panel relative px-6 py-14 text-center">
           {/* An empty pattern is sixteen dark keys of invitation. */}
@@ -272,6 +304,40 @@ export default async function ProductsPage({
           </Button>
         </div>
       )}
+
+      {pageCount > 1 ? (
+        <div className="mt-8 flex items-center justify-between gap-4 border-t border-border pt-6">
+          <Link
+            href={catalogHref(params, { page: page > 1 ? String(page - 1) : undefined })}
+            aria-disabled={page <= 1}
+            tabIndex={page <= 1 ? -1 : undefined}
+            className={cn(
+              "font-mono text-[11px] uppercase tracking-[0.12em] transition-colors",
+              page <= 1
+                ? "pointer-events-none text-muted-foreground/40"
+                : "text-foreground hover:text-accent"
+            )}
+          >
+            ← Prev
+          </Link>
+          <SilkLabel>
+            Page {page} of {pageCount}
+          </SilkLabel>
+          <Link
+            href={catalogHref(params, { page: String(page + 1) })}
+            aria-disabled={page >= pageCount}
+            tabIndex={page >= pageCount ? -1 : undefined}
+            className={cn(
+              "font-mono text-[11px] uppercase tracking-[0.12em] transition-colors",
+              page >= pageCount
+                ? "pointer-events-none text-muted-foreground/40"
+                : "text-foreground hover:text-accent"
+            )}
+          >
+            Next →
+          </Link>
+        </div>
+      ) : null}
     </div>
   );
 }

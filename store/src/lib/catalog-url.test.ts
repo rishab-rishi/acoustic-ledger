@@ -48,6 +48,24 @@ describe("catalogHref", () => {
     ).toBe("/products?q=eq");
   });
 
+  it("keeps the current page when the patch doesn't touch any filter", () => {
+    expect(catalogHref({ q: "monitor", page: "3" }, {})).toBe(
+      "/products?q=monitor&page=3"
+    );
+  });
+
+  it("resets the page when another filter changes and the patch says nothing about page", () => {
+    expect(catalogHref({ q: "monitor", page: "3" }, { category: "eq" })).toBe(
+      "/products?q=monitor&category=eq"
+    );
+  });
+
+  it("still applies an explicit page change alongside other filters", () => {
+    expect(catalogHref({ q: "monitor", page: "3" }, { page: "2" })).toBe(
+      "/products?q=monitor&page=2"
+    );
+  });
+
   it("round-trips through URLSearchParams", () => {
     const href = catalogHref({ q: "monitor", min: "100", max: "500" });
     const params = new URLSearchParams(href.split("?")[1]);
