@@ -62,30 +62,39 @@ export async function createPendingOrder(
   const shippingCents = shippingForSubtotal(subtotalCents);
   const totalCents = subtotalCents + shippingCents;
 
-  const [order] = await db
-    .insert(orders)
-    .values({
-      userId: user?.id ?? null,
-      email: buyerEmail,
-      status: "pending",
-      subtotalCents,
-      shippingCents,
-      totalCents,
-    })
-    .returning();
+  // The order row and its line items must land together: if the item insert
+  // failed after the order insert committed, that pending order would have
+  // no lines, and if it ever somehow settled, settleOrder() would find
+  // nothing to decrement stock for and still mark it paid.
+  const order = await db.transaction(async (tx) => {
+    const [order] = await tx
+      .insert(orders)
+      .values({
+        userId: user?.id ?? null,
+        email: buyerEmail,
+        status: "pending",
+        subtotalCents,
+        shippingCents,
+        totalCents,
+      })
+      .returning();
 
-  // Names and prices are snapshotted here and never joined back to products,
-  // so later catalog edits can't rewrite order history (build spec §3 rule 2).
-  await db.insert(orderItems).values(
-    cart.items.map((i) => ({
-      orderId: order.id,
-      variantId: i.variantId,
-      productName: i.variant.product.name,
-      variantName: i.variant.name,
-      unitPriceCents: i.variant.priceCents,
-      qty: i.qty,
-    }))
-  );
+    // Names and prices are snapshotted here and never joined back to
+    // products, so later catalog edits can't rewrite order history (build
+    // spec §3 rule 2).
+    await tx.insert(orderItems).values(
+      cart.items.map((i) => ({
+        orderId: order.id,
+        variantId: i.variantId,
+        productName: i.variant.product.name,
+        variantName: i.variant.name,
+        unitPriceCents: i.variant.priceCents,
+        qty: i.qty,
+      }))
+    );
+
+    return order;
+  });
 
   return {
     ok: true,
