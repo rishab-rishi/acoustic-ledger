@@ -80,6 +80,14 @@ Vercel → Project → Settings → Environment Variables. Set for **Production*
 | `PAYPAL_API_BASE` | `https://api-m.sandbox.paypal.com` |
 | `PAYPAL_WEBHOOK_ID` | leave empty until step 5 |
 | `DEMO_CHECKOUT_FALLBACK` | `1` to expose the "Simulate payment" button |
+| `HEALTH_TOKEN` | a random string; generate one, e.g. `openssl rand -hex 32` |
+
+> **Set `HEALTH_TOKEN` before you rely on `/api/health`.** Without it — or with
+> a request missing/mismatching `x-health-token` — the route returns only
+> `{ ok }` and never the hostname, region, env var names, or driver error it
+> shows when authenticated. Leaving it unset is safe (the route just never
+> serves the detailed body) but you lose the diagnostic. Pass the header as
+> `curl -H "x-health-token: $HEALTH_TOKEN" https://<your-app>.vercel.app/api/health`.
 
 > **Generate a new `AUTH_SECRET`.** Don't reuse the development one. It signs
 > session JWTs; a leaked dev secret would let anyone mint a session — including
