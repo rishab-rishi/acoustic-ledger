@@ -29,7 +29,15 @@ export const DEMO_CAPTURE_PREFIX = "DEMO-";
 
 function isSandboxPaypal(): boolean {
   const base = process.env.PAYPAL_API_BASE ?? "https://api-m.sandbox.paypal.com";
-  return base.includes("sandbox.paypal.com");
+  try {
+    // Exact hostname match, not a substring check — `.includes()` would also
+    // accept "https://evil.example.com/sandbox.paypal.com". The value is an
+    // environment variable, not attacker input, but the whole point of this
+    // function is to be a whitelist that cannot be tricked.
+    return new URL(base).hostname === "api-m.sandbox.paypal.com";
+  } catch {
+    return false; // unparseable counts as live
+  }
 }
 
 export function isDemoCheckoutEnabled(): boolean {

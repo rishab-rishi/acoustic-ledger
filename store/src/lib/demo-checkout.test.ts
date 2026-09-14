@@ -50,6 +50,18 @@ describe("isDemoCheckoutEnabled", () => {
     }
   });
 
+  it("is not fooled by the sandbox hostname appearing in the path", () => {
+    process.env.DEMO_CHECKOUT_FALLBACK = "1";
+    process.env.PAYPAL_API_BASE = "https://evil.example.com/sandbox.paypal.com";
+    expect(isDemoCheckoutEnabled()).toBe(false);
+  });
+
+  it("treats an unparseable base as live, not sandbox", () => {
+    process.env.DEMO_CHECKOUT_FALLBACK = "1";
+    process.env.PAYPAL_API_BASE = "not a url";
+    expect(isDemoCheckoutEnabled()).toBe(false);
+  });
+
   it("stamps demo settlements with a recognisable prefix", () => {
     expect(DEMO_CAPTURE_PREFIX).toBe("DEMO-");
   });
