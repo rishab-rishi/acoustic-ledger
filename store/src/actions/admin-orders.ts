@@ -100,9 +100,15 @@ export async function cancelOrder(input: unknown): Promise<ActionResult> {
         });
         for (const line of lines) {
           if (!line.variantId) continue;
+          // Restock exactly what settlement actually took, not qty — an
+          // oversold line (stockDecrementedQty < qty) must not hand back
+          // more stock than it ever removed. Older paid orders that
+          // predate this column fall back to qty, the best available
+          // assumption for data settlement wrote before it was tracked.
+          const restockQty = line.stockDecrementedQty ?? line.qty;
           await tx
             .update(variants)
-            .set({ stock: sql`${variants.stock} + ${line.qty}` })
+            .set({ stock: sql`${variants.stock} + ${restockQty}` })
             .where(eq(variants.id, line.variantId));
         }
       }

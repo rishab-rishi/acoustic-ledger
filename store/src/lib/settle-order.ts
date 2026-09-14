@@ -1,4 +1,4 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { carts, orderItems, orders, variants } from "@/db/schema";
 
@@ -63,10 +63,37 @@ export async function settleOrder(params: {
 
     for (const line of lines) {
       if (!line.variantId) continue;
+
+      // Locked for the rest of this transaction so a concurrent settlement
+      // touching the same variant can't read a stock figure that's about to
+      // change under it — the same correctness goal a single atomic
+      // `UPDATE ... SET stock = GREATEST(stock - qty, 0)` had, but this also
+      // needs the pre-decrement stock to record how much was actually taken
+      // (see the stockDecrementedQty comment on the schema).
+      const [variant] = await tx
+        .select({ stock: variants.stock })
+        .from(variants)
+        .where(eq(variants.id, line.variantId))
+        .for("update");
+
+      // Clamped at 0 on an oversell — stock moving while people shop, or
+      // two buyers racing the last unit, both land here rather than going
+      // negative.
+      const decremented = variant ? Math.min(line.qty, Math.max(variant.stock, 0)) : 0;
+
+      if (variant) {
+        await tx
+          .update(variants)
+          .set({ stock: variant.stock - decremented })
+          .where(eq(variants.id, line.variantId));
+      }
+
+      // Recorded even when it equals qty, so cancelOrder() always has an
+      // exact figure to restock rather than assuming qty was fully taken.
       await tx
-        .update(variants)
-        .set({ stock: sql`greatest(${variants.stock} - ${line.qty}, 0)` })
-        .where(eq(variants.id, line.variantId));
+        .update(orderItems)
+        .set({ stockDecrementedQty: decremented })
+        .where(eq(orderItems.id, line.id));
     }
 
     if (cartId) {

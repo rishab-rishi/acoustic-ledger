@@ -1,4 +1,7 @@
+import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
+import { db } from "@/db";
+import { orderItems } from "@/db/schema";
 import { settleOrder } from "@/lib/settle-order";
 import { makePendingOrder, makeVariant, orderRow, stockOf } from "./fixtures";
 
@@ -98,11 +101,13 @@ describe("settleOrder", () => {
     expect(await stockOf(b.variant.id)).toBe(5);
   });
 
-  it("clamps stock at zero rather than going negative on an oversell", async () => {
-    // greatest(stock - qty, 0) in settleOrder. This documents the current
-    // behaviour: the sale is honoured and inventory floors at zero. Note that
-    // cancelling such an order later restocks the full qty, which inflates
-    // stock by the oversold amount.
+  it("clamps stock at zero rather than going negative on an oversell, and records the real decrement", async () => {
+    // The sale is honoured and inventory floors at zero rather than going
+    // negative — same behaviour as before. What's new: order_items records
+    // how much was *actually* taken (1, not the ordered 5), so
+    // cancelOrder() can restock the true amount instead of inflating stock
+    // by the oversold amount. See tests/cancel-order-restock.test.ts for
+    // the restock side of this.
     const { variant } = await makeVariant(1);
     const order = await makePendingOrder({
       variantId: variant.id,
@@ -112,6 +117,27 @@ describe("settleOrder", () => {
 
     await settleOrder({ orderId: order.id, captureId: "CAP-OVER" });
     expect(await stockOf(variant.id)).toBe(0);
+
+    const [item] = await db.query.orderItems.findMany({
+      where: eq(orderItems.orderId, order.id),
+    });
+    expect(item.stockDecrementedQty).toBe(1);
+  });
+
+  it("records the full qty as decremented when stock was sufficient", async () => {
+    const { variant } = await makeVariant(10);
+    const order = await makePendingOrder({
+      variantId: variant.id,
+      qty: 3,
+      unitPriceCents: 10_000,
+    });
+
+    await settleOrder({ orderId: order.id, captureId: "CAP-FULL" });
+
+    const [item] = await db.query.orderItems.findMany({
+      where: eq(orderItems.orderId, order.id),
+    });
+    expect(item.stockDecrementedQty).toBe(3);
   });
 
   it("leaves the capture id alone when none is supplied", async () => {

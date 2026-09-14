@@ -255,6 +255,13 @@ export const orderItems = pgTable(
     variantName: text("variant_name").notNull(),
     unitPriceCents: integer("unit_price_cents").notNull(),
     qty: integer("qty").notNull(),
+    // Null until settlement. Usually equals qty; less than qty only on an
+    // oversell (stock ran out between the cart re-check and settlement,
+    // e.g. two buyers racing the last unit) — settleOrder() clamps the
+    // decrement at 0 rather than going negative. cancelOrder() restocks
+    // this value, not qty, so a cancelled oversold order can't hand back
+    // more stock than it ever actually took.
+    stockDecrementedQty: integer("stock_decremented_qty"),
     ...timestamps,
   },
   (t) => [
