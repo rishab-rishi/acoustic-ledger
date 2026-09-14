@@ -7,6 +7,7 @@ import {
   isDemoCheckoutEnabled,
 } from "@/lib/demo-checkout";
 import { createPendingOrder } from "@/lib/pending-order";
+import { isRateLimited } from "@/lib/rate-limit";
 import { settleOrder } from "@/lib/settle-order";
 
 const bodySchema = z.object({
@@ -27,6 +28,14 @@ export async function POST(req: Request) {
   // 404 rather than 403: when disabled, this endpoint does not exist.
   if (!isDemoCheckoutEnabled()) {
     return new Response(null, { status: 404 });
+  }
+
+  // Keyed on IP.
+  if (await isRateLimited("demo-checkout", { headers: req.headers })) {
+    return Response.json(
+      { error: "Too many requests. Please slow down and try again." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
   }
 
   let email: string | undefined;

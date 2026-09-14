@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { orders } from "@/db/schema";
 import { getCartId } from "@/lib/cart";
 import { paypalAmountToCents, paypalFetch } from "@/lib/paypal";
+import { isRateLimited } from "@/lib/rate-limit";
 import { settleOrder } from "@/lib/settle-order";
 
 const bodySchema = z.object({ paypalOrderId: z.string().min(1).max(64) });
@@ -48,6 +49,15 @@ type CaptureResponse = {
  * one.
  */
 export async function POST(req: Request) {
+  // Keyed on IP, checked before the outbound PayPal call so a blocked
+  // request costs nothing outbound.
+  if (await isRateLimited("paypal-capture", { headers: req.headers })) {
+    return Response.json(
+      { error: "Too many requests. Please slow down and try again." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
+
   let paypalOrderId: string;
   try {
     const parsed = bodySchema.safeParse(await req.json());

@@ -2,10 +2,12 @@
 
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import type { ActionResult } from "@/lib/action-result";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const registerSchema = z.object({
   name: z.string().trim().min(1, "Name is required.").max(80),
@@ -24,6 +26,12 @@ export async function registerUser(input: unknown): Promise<ActionResult> {
 
   const { name, password } = parsed.data;
   const email = parsed.data.email.toLowerCase();
+
+  // Keyed on IP (the default when no rateLimitKey is passed): unlimited
+  // account creation is both a spam vector and a database-growth vector.
+  if (await isRateLimited("register-attempt", { headers: await headers() })) {
+    return { ok: false, error: "Too many attempts. Try again in a few minutes." };
+  }
 
   try {
     const existing = await db.query.users.findFirst({
