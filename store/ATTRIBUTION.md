@@ -115,6 +115,24 @@ an obligation to release this project's own source code.
 
 **Verdict: clear.**
 
+## Making copying provable (Task 4.4)
+
+Ownership is asserted (`LICENSE`, footer copyright, site metadata — Task
+4.2); this section is about *proving* it if it were ever disputed.
+
+The strongest evidence already exists and needs no new work: **this
+repository's commit history** — dated, incremental, individually
+attributed, and showing the project's real order of construction (phases,
+this hardening pass, etc.). That evidence is destroyed by squashing or
+rewriting history wholesale (e.g. squash-merging the whole project into one
+commit, or a history rewrite). Preserve it.
+
+No unique "canary" strings (a fake internal component name, a distinctive
+comment planted purely to prove copying later) were added — the brief is
+explicit that these should only go in if the user asks for them, and this
+pass didn't get that request. If wanted later, they're cheap to add and
+should stay invisible to users and harmless to behavior.
+
 ## Summary
 
 Every category audited comes back clear: no stock imagery, no unverified
