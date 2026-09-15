@@ -198,6 +198,19 @@ Against the live URL, in order:
 
 ## Live-demo hazards
 
+**A deployment can be wrapped in Vercel's own login wall.** Vercel Deployment
+Protection ("Vercel Authentication") can gate a URL — including Production on
+some plans — behind a redirect to `vercel.com/sso-api` that only team members
+pass. Symptom: the site looks completely broken (nothing loads, including the
+homepage) for anyone outside the team, which is easy to misread as a database
+or build failure. Diagnose with `curl -sI <url>`: a `302` to `vercel.com/sso-api`
+means this, not an app or Neon problem. Fix in **Settings → Deployment
+Protection** — disable it for Production, or use a Protection Bypass link if
+you want to keep it gated but demo it to someone specific. Also worth checking:
+whether the URL you're sharing is actually the assigned Production alias
+rather than a one-off preview/deployment-hash URL, which gets protected by
+default on most plans regardless of the Production setting.
+
 **Neon scales to zero** after about 5 minutes idle, adding roughly half a
 second to the first request. Load the site once shortly before presenting, or
 add a Vercel cron that pings it.
