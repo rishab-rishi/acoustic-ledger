@@ -4,6 +4,8 @@
 
 **[Live demo →](https://acoustic-ledger-nine.vercel.app)**
 
+![Acoustic Ledger storefront — the category rack on the home page](docs/storefront.jpg)
+
 > **This is a demo store.** The brand and its products are fictional. Payments run in the PayPal sandbox, so no real money is charged. The point of this project is the engineering, not the catalog.
 
 ---
