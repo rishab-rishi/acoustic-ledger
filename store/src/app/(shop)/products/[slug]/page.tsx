@@ -78,7 +78,7 @@ export default async function ProductPage({
         <div>
           <Gallery images={product.images} alt={product.name} />
           <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
-            Ref. photo — representative of the line
+            Illustrated rendering — not an exact photo
           </p>
         </div>
 

@@ -73,7 +73,7 @@ const PRODUCTS: SeedProduct[] = [
       "A 3.5\" nearfield monitor built for desks where space is the constraint, not standards. The waveguide-loaded tweeter keeps the top end even off-axis, so the balance holds up whether you're centered or reaching for a fader. Not a bass monster — it's tuned to tell you the truth about the low end instead of flattering it.",
     categorySlug: "studio-monitors",
     basePriceCents: 14900,
-    images: ["monitor-front-01"],
+    images: ["datum-3-compact-monitor"],
     featured: true,
     variants: [
       { name: "Single", skuSuffix: "SGL", priceCents: 14900, stock: 42 },
@@ -87,7 +87,7 @@ const PRODUCTS: SeedProduct[] = [
       "The reference point for the Datum line: a 5\" woven-fiber woofer and 1\" silk dome crossed over at 2.4kHz for a seam you won't hear. Flat within 2dB from 55Hz to 20kHz, with a rear port tuned to extend low end without letting it dominate the mix.",
     categorySlug: "studio-monitors",
     basePriceCents: 24900,
-    images: ["monitor-front-01"],
+    images: ["datum-5-nearfield-monitor"],
     featured: true,
     variants: [
       { name: "Single", skuSuffix: "SGL", priceCents: 24900, stock: 31 },
@@ -101,7 +101,7 @@ const PRODUCTS: SeedProduct[] = [
       "A revised crossover and a stiffer cabinet brace over the original Datum 5, cutting cabinet resonance by roughly 6dB in the 300-500Hz range where boxiness usually hides. Same balanced, low-emphasis tuning philosophy, tightened up.",
     categorySlug: "studio-monitors",
     basePriceCents: 27900,
-    images: ["monitor-front-01"],
+    images: ["datum-5-mkii-nearfield-monitor"],
     variants: [
       { name: "Single", skuSuffix: "SGL", priceCents: 27900, stock: 27 },
       { name: "Matched Pair", skuSuffix: "PR", priceCents: 54900, stock: 15 },
@@ -114,7 +114,7 @@ const PRODUCTS: SeedProduct[] = [
       "An 8\" monitor for rooms too large for a nearfield to load properly. The bigger cone moves more air at lower excursion, which means less distortion at the volumes a full mix session actually needs — without the bloated low end larger monitors are prone to.",
     categorySlug: "studio-monitors",
     basePriceCents: 44900,
-    images: ["monitor-angle-02"],
+    images: ["datum-8-studio-monitor"],
     variants: [
       { name: "Single", skuSuffix: "SGL", priceCents: 44900, stock: 12 },
       { name: "Matched Pair", skuSuffix: "PR", priceCents: 87900, stock: 8 },
@@ -127,7 +127,7 @@ const PRODUCTS: SeedProduct[] = [
       "A coincident driver design — the tweeter sits at the acoustic center of the woofer cone — so the whole frequency range arrives from a single point in space. That gives a wider, more stable sweet spot than a standard two-way, which matters when you're mixing for more than one seat in the room.",
     categorySlug: "studio-monitors",
     basePriceCents: 59900,
-    images: ["monitor-angle-02"],
+    images: ["reference-6-coaxial-monitor"],
     featured: true,
     variants: [
       { name: "Single", skuSuffix: "SGL", priceCents: 59900, stock: 9 },
@@ -141,7 +141,7 @@ const PRODUCTS: SeedProduct[] = [
       "A battery-powered nearfield for mixing outside a treated room — location sessions, hotel rooms, a second opinion away from the studio. 9 hours on a charge, with the same restrained low-end voicing as the rest of the Datum-tuned lineup so what you hear on the road still translates.",
     categorySlug: "studio-monitors",
     basePriceCents: 19900,
-    images: ["monitor-front-01"],
+    images: ["fieldglass-portable-monitor"],
     variants: [
       { name: "Single", skuSuffix: "SGL", priceCents: 19900, stock: 22 },
       { name: "Matched Pair", skuSuffix: "PR", priceCents: 38900, stock: 0 },
@@ -154,7 +154,7 @@ const PRODUCTS: SeedProduct[] = [
       "Extends any Datum or Reference pair down to 28Hz with a steep 24dB/octave crossover, so the mains keep doing what they're good at and the sub only fills the octave underneath. Built for mix decisions, not for feeling it in your chest.",
     categorySlug: "studio-monitors",
     basePriceCents: 54900,
-    images: ["monitor-sub-03"],
+    images: ["baseline-10-studio-subwoofer"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 54900, stock: 11 },
       { name: "Silver", skuSuffix: "SLV", priceCents: 56900, stock: 4 },
@@ -169,7 +169,7 @@ const PRODUCTS: SeedProduct[] = [
       "Open-back monitoring headphones for sessions long enough that clamping force and heat start to matter. The open design trades isolation for a more natural, less fatiguing stereo image — built for mixing, not for tracking next to a live mic.",
     categorySlug: "headphones",
     basePriceCents: 24900,
-    images: ["headphone-over-01"],
+    images: ["calibrate-open-back-headphones"],
     featured: true,
     variants: [
       { name: "Graphite", skuSuffix: "GRA", priceCents: 24900, stock: 38 },
@@ -183,7 +183,7 @@ const PRODUCTS: SeedProduct[] = [
       "Closed-back monitoring headphones with enough isolation for tracking near a live mic without bleed. Tuned to the same flat target curve as the open-back model, so switching between the two mid-session doesn't change your read on the mix.",
     categorySlug: "headphones",
     basePriceCents: 22900,
-    images: ["headphone-over-01"],
+    images: ["calibrate-closed-back-headphones"],
     variants: [
       { name: "Graphite", skuSuffix: "GRA", priceCents: 22900, stock: 33 },
       { name: "Slate", skuSuffix: "SLT", priceCents: 22900, stock: 17 },
@@ -196,7 +196,7 @@ const PRODUCTS: SeedProduct[] = [
       "An entry point into the Calibrate line's tuning philosophy at a third of the cost of the Pro model. Lighter clamping force and a simplified driver, but the same restrained bass shelf — a deliberately unglamorous headphone for people who'd rather trust their monitors.",
     categorySlug: "headphones",
     basePriceCents: 12900,
-    images: ["headphone-compact-02"],
+    images: ["calibrate-mix-lite-headphones"],
     variants: [
       { name: "Graphite", skuSuffix: "GRA", priceCents: 12900, stock: 51 },
     ],
@@ -208,7 +208,7 @@ const PRODUCTS: SeedProduct[] = [
       "The flagship of the line: hand-matched driver pairs within 0.5dB of each other, replaceable earpads, and a detachable cable with a locking connector. Built for engineers who use headphones as a primary reference, not a backup.",
     categorySlug: "headphones",
     basePriceCents: 39900,
-    images: ["headphone-over-01"],
+    images: ["calibrate-pro-reference-headphones"],
     featured: true,
     variants: [
       { name: "Graphite", skuSuffix: "GRA", priceCents: 39900, stock: 14 },
@@ -222,7 +222,7 @@ const PRODUCTS: SeedProduct[] = [
       "A folding, travel-sized headphone that keeps the Fieldglass line's flat tuning without the studio-headphone bulk. Comes with a hard case sized for a laptop bag, for mix checks between sessions.",
     categorySlug: "headphones",
     basePriceCents: 17900,
-    images: ["headphone-compact-02"],
+    images: ["fieldglass-portable-headphones"],
     variants: [
       { name: "Graphite", skuSuffix: "GRA", priceCents: 17900, stock: 29 },
     ],
@@ -234,7 +234,7 @@ const PRODUCTS: SeedProduct[] = [
       "Wireless monitoring with a low-latency mode intended for tracking, not casual listening — under 40ms round-trip, low enough that a vocalist won't fight their own headphone mix. 18-hour battery, with a wired fallback for sessions where latency has to be zero.",
     categorySlug: "headphones",
     basePriceCents: 29900,
-    images: ["headphone-compact-02"],
+    images: ["calibrate-wireless-monitor-headphones"],
     variants: [
       { name: "Graphite", skuSuffix: "GRA", priceCents: 29900, stock: 20 },
       { name: "Slate", skuSuffix: "SLT", priceCents: 29900, stock: 0 },
@@ -247,7 +247,7 @@ const PRODUCTS: SeedProduct[] = [
       "Extra-isolating closed-back headphones for vocal booths and drum rooms, where bleed into a nearby mic is the actual problem being solved. 26dB of passive isolation, at some cost to soundstage width versus the open-back model — a deliberate tradeoff for a specific job.",
     categorySlug: "headphones",
     basePriceCents: 19900,
-    images: ["headphone-over-01"],
+    images: ["calibrate-iso-tracking-headphones"],
     variants: [
       { name: "Graphite", skuSuffix: "GRA", priceCents: 19900, stock: 25 },
     ],
@@ -261,7 +261,7 @@ const PRODUCTS: SeedProduct[] = [
       "A 4-band parametric EQ, one channel per instrument bus, with fully sweepable frequency and Q on every band. Unity-gain bypass on each channel so A/B comparisons against the dry signal are honest, not level-biased.",
     categorySlug: "equalizers-dsp",
     basePriceCents: 34900,
-    images: ["eq-knobs-02"],
+    images: ["parametric-4-channel-eq"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 34900, stock: 16 },
       { name: "Silver", skuSuffix: "SLV", priceCents: 36900, stock: 10 },
@@ -274,7 +274,7 @@ const PRODUCTS: SeedProduct[] = [
       "The 4-channel unit's larger sibling, built for full mix-bus correction across eight channels in a single 2U rack space. Same sweepable-band design, doubled — meant for the back of a rack, not the top of a desk.",
     categorySlug: "equalizers-dsp",
     basePriceCents: 54900,
-    images: ["eq-knobs-02"],
+    images: ["parametric-8-channel-eq"],
     featured: true,
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 54900, stock: 7 },
@@ -287,7 +287,7 @@ const PRODUCTS: SeedProduct[] = [
       "A classic 15-band graphic EQ with ISO-standard center frequencies, built for fast room correction rather than surgical mix work. The slider layout gives you an immediate visual read of the curve you're dialing in — useful when you're working by ear against a room, not a plugin window.",
     categorySlug: "equalizers-dsp",
     basePriceCents: 29900,
-    images: ["eq-sliders-01"],
+    images: ["graphic-15-band-eq"],
     featured: true,
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 29900, stock: 21 },
@@ -301,7 +301,7 @@ const PRODUCTS: SeedProduct[] = [
       "Third-octave resolution across the full audible range, for room correction work where a 15-band unit isn't precise enough to notch a narrow standing-wave problem. Constant-Q filter design keeps adjacent bands from smearing into each other.",
     categorySlug: "equalizers-dsp",
     basePriceCents: 44900,
-    images: ["eq-sliders-01"],
+    images: ["graphic-31-band-eq"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 44900, stock: 8 },
     ],
@@ -313,7 +313,7 @@ const PRODUCTS: SeedProduct[] = [
       "A compact 2-channel desktop EQ sized to sit next to a monitor controller rather than live in a rack. Meant for small, targeted corrections — a resonant desk, a wall too close behind the monitors — not full-range shaping.",
     categorySlug: "equalizers-dsp",
     basePriceCents: 19900,
-    images: ["eq-knobs-02"],
+    images: ["contour-desktop-eq"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 19900, stock: 24 },
     ],
@@ -325,7 +325,7 @@ const PRODUCTS: SeedProduct[] = [
       "A digital room correction unit that ships with a calibrated measurement mic. Run the sweep, and it builds a correction curve targeting a flat in-room response — automated groundwork for the same balanced, non-boosted low end the rest of the catalog is tuned around.",
     categorySlug: "equalizers-dsp",
     basePriceCents: 64900,
-    images: ["eq-knobs-02"],
+    images: ["room-correction-dsp-processor"],
     featured: true,
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 64900, stock: 6 },
@@ -338,7 +338,7 @@ const PRODUCTS: SeedProduct[] = [
       "A premium 2-channel mastering EQ with discrete, hand-selected components and stepped gain controls for repeatable settings. Built for the last, most conservative pass on a mix bus — small moves, large consequences.",
     categorySlug: "equalizers-dsp",
     basePriceCents: 89900,
-    images: ["eq-knobs-02"],
+    images: ["contour-mastering-eq"],
     variants: [
       { name: "Silver", skuSuffix: "SLV", priceCents: 89900, stock: 3 },
     ],
@@ -350,7 +350,7 @@ const PRODUCTS: SeedProduct[] = [
       "A combined preamp, compressor, and 3-band EQ in a single channel strip, for tracking chains that need shaping before the signal ever hits a DAW. The EQ section shares its curve design with the Contour desktop unit, scaled down to fit the strip.",
     categorySlug: "equalizers-dsp",
     basePriceCents: 49900,
-    images: ["eq-knobs-02"],
+    images: ["headroom-channel-strip-eq"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 49900, stock: 10 },
     ],
@@ -364,7 +364,7 @@ const PRODUCTS: SeedProduct[] = [
       "A 2-channel desktop headphone amp with enough clean power to drive high-impedance reference headphones without strain. Zero-feedback design keeps distortion low across the volume range, not just at the top.",
     categorySlug: "amplifiers-interfaces",
     basePriceCents: 24900,
-    images: ["interface-jacks-02"],
+    images: ["current-2-headphone-amplifier"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 24900, stock: 19 },
       { name: "Silver", skuSuffix: "SLV", priceCents: 26900, stock: 12 },
@@ -377,7 +377,7 @@ const PRODUCTS: SeedProduct[] = [
       "Source and level switching for up to three sets of monitors plus a headphone output, with calibrated volume detents so a mix level is reproducible session to session. The VU pair on the front reads true RMS, not peak, for a level sense that matches how loud the room actually feels.",
     categorySlug: "amplifiers-interfaces",
     basePriceCents: 39900,
-    images: ["amp-meters-01"],
+    images: ["current-8-monitor-controller"],
     featured: true,
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 39900, stock: 14 },
@@ -390,7 +390,7 @@ const PRODUCTS: SeedProduct[] = [
       "A 4-in/4-out USB interface with clean, accurate preamps rather than character-driven coloration — the same philosophy as the monitors it's meant to sit next to. Class-compliant, so it works without a driver install on most systems.",
     categorySlug: "amplifiers-interfaces",
     basePriceCents: 34900,
-    images: ["interface-jacks-02"],
+    images: ["interface-4-audio-interface"],
     featured: true,
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 34900, stock: 27 },
@@ -403,7 +403,7 @@ const PRODUCTS: SeedProduct[] = [
       "Eight channels of the same clean preamp design as the Interface 4, for sessions that need to track a full band at once. Adds word clock I/O for syncing with outboard digital gear.",
     categorySlug: "amplifiers-interfaces",
     basePriceCents: 59900,
-    images: ["interface-jacks-02"],
+    images: ["interface-8-audio-interface"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 59900, stock: 8 },
     ],
@@ -415,7 +415,7 @@ const PRODUCTS: SeedProduct[] = [
       "A 2-channel power amp for driving passive Datum or Reference monitors, rated at 100W per channel into 8 ohms with headroom to spare. Toroidal transformer keeps the noise floor low enough to disappear under any program material.",
     categorySlug: "amplifiers-interfaces",
     basePriceCents: 74900,
-    images: ["amp-meters-01"],
+    images: ["current-100-power-amplifier"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 74900, stock: 5 },
     ],
@@ -427,7 +427,7 @@ const PRODUCTS: SeedProduct[] = [
       "A clean, 2-channel mic preamp with up to 66dB of gain and a switchable high-pass filter. Built for engineers who add character with a mic choice, not with the preamp — this one is meant to stay out of the way.",
     categorySlug: "amplifiers-interfaces",
     basePriceCents: 44900,
-    images: ["interface-jacks-02"],
+    images: ["headroom-preamp"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 44900, stock: 11 },
     ],
@@ -439,7 +439,7 @@ const PRODUCTS: SeedProduct[] = [
       "A standalone D/A converter for engineers who want their monitoring chain decoupled from a computer's onboard audio. Bit-transparent up to 24-bit/192kHz, with a fixed and a variable output for feeding a power amp directly.",
     categorySlug: "amplifiers-interfaces",
     basePriceCents: 54900,
-    images: ["amp-meters-01"],
+    images: ["current-dac-reference-converter"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 54900, stock: 9 },
       { name: "Silver", skuSuffix: "SLV", priceCents: 56900, stock: 0 },
@@ -451,10 +451,10 @@ const PRODUCTS: SeedProduct[] = [
     name: "Line XLR Cable",
     slug: "line-xlr-cable",
     description:
-      "A balanced XLR cable with braided shielding and gold-plated connectors, built to reject noise over long mic and line runs. The workhorse cable behind most of the catalog's product photography.",
+      "A balanced XLR cable with braided shielding and gold-plated connectors, built to reject noise over long mic and line runs. The workhorse cable in every signal chain in the catalog.",
     categorySlug: "cables-accessories",
     basePriceCents: 1900,
-    images: ["cable-xlr-01"],
+    images: ["line-xlr-cable"],
     variants: [
       { name: "1m", skuSuffix: "1M", priceCents: 1900, stock: 88 },
       { name: "3m", skuSuffix: "3M", priceCents: 2900, stock: 64 },
@@ -469,7 +469,7 @@ const PRODUCTS: SeedProduct[] = [
       "A balanced 1/4\" TRS cable for line-level connections between interfaces, preamps, and outboard gear. Same shielding standard as the XLR line, in a connector suited to unbalanced and balanced line runs.",
     categorySlug: "cables-accessories",
     basePriceCents: 1700,
-    images: ["cable-trs-02"],
+    images: ["line-trs-instrument-cable"],
     variants: [
       { name: "1m", skuSuffix: "1M", priceCents: 1700, stock: 76 },
       { name: "3m", skuSuffix: "3M", priceCents: 2500, stock: 52 },
@@ -483,7 +483,7 @@ const PRODUCTS: SeedProduct[] = [
       "A shielded USB-C cable rated for the current draw and data rates the Interface 4 and Interface 8 need. Ferrite choke at both ends to keep interface noise out of a nearby signal chain.",
     categorySlug: "cables-accessories",
     basePriceCents: 1400,
-    images: ["cable-trs-02"],
+    images: ["line-usb-c-interface-cable"],
     variants: [
       { name: "1m", skuSuffix: "1M", priceCents: 1400, stock: 61 },
       { name: "2m", skuSuffix: "2M", priceCents: 1900, stock: 43 },
@@ -496,7 +496,7 @@ const PRODUCTS: SeedProduct[] = [
       "A TOSLINK optical cable for digital I/O between the Room Correction DSP Processor, the Current DAC, and other digital gear. Immune to the electrical noise that a long copper digital run can pick up.",
     categorySlug: "cables-accessories",
     basePriceCents: 1600,
-    images: ["cable-trs-02"],
+    images: ["line-optical-cable"],
     variants: [
       { name: "1m", skuSuffix: "1M", priceCents: 1600, stock: 39 },
       { name: "2m", skuSuffix: "2M", priceCents: 2100, stock: 22 },
@@ -510,7 +510,7 @@ const PRODUCTS: SeedProduct[] = [
       "High-density foam pads that decouple a monitor cabinet from a desk, cutting the resonant transfer that muddies low-mid detail. Angled wedge option included for monitors sitting above ear height.",
     categorySlug: "cables-accessories",
     basePriceCents: 2900,
-    images: ["stand-iso-01"],
+    images: ["ledger-monitor-isolation-pads"],
     variants: [
       { name: "Small (fits Datum 3/5)", skuSuffix: "SM", priceCents: 2900, stock: 47 },
       { name: "Large (fits Datum 8/Reference 6)", skuSuffix: "LG", priceCents: 3900, stock: 21 },
@@ -523,7 +523,7 @@ const PRODUCTS: SeedProduct[] = [
       "Isolating desktop stands that tilt monitors to ear height and decouple them from the desk surface in one piece, replacing a stack of books and a pair of isolation pads. Sold as a pair.",
     categorySlug: "cables-accessories",
     basePriceCents: 6900,
-    images: ["stand-iso-01"],
+    images: ["ledger-desktop-monitor-stands"],
     featured: true,
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 6900, stock: 16 },
@@ -537,7 +537,7 @@ const PRODUCTS: SeedProduct[] = [
       "A weighted desktop stand sized for the Calibrate line's headband curve, keeping the earpads shaped correctly between sessions instead of resting flat on a desk.",
     categorySlug: "cables-accessories",
     basePriceCents: 3400,
-    images: ["stand-iso-01"],
+    images: ["ledger-headphone-stand"],
     variants: [
       { name: "Black", skuSuffix: "BLK", priceCents: 3400, stock: 33 },
       { name: "Walnut", skuSuffix: "WAL", priceCents: 3900, stock: 14 },
@@ -550,7 +550,7 @@ const PRODUCTS: SeedProduct[] = [
       "Rack ears and hardware for mounting any 1U or 2U unit in the catalog — EQs, the monitor controller, preamps — into a standard 19\" rack frame.",
     categorySlug: "cables-accessories",
     basePriceCents: 1900,
-    images: ["stand-iso-01"],
+    images: ["ledger-rack-mount-kit"],
     variants: [
       { name: "1U", skuSuffix: "1U", priceCents: 1900, stock: 40 },
       { name: "2U", skuSuffix: "2U", priceCents: 2400, stock: 25 },
@@ -563,7 +563,7 @@ const PRODUCTS: SeedProduct[] = [
       "Wedge-profile acoustic panels for first-reflection treatment around a monitoring position. Treats flutter echo and early reflections — a room-treatment complement to correction DSP, not a replacement for it.",
     categorySlug: "cables-accessories",
     basePriceCents: 8900,
-    images: ["stand-iso-01"],
+    images: ["ledger-acoustic-foam-panel-set"],
     variants: [
       { name: "6-Pack, Charcoal", skuSuffix: "6PK", priceCents: 8900, stock: 20 },
       { name: "12-Pack, Charcoal", skuSuffix: "12PK", priceCents: 15900, stock: 11 },

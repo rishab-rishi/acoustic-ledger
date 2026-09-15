@@ -300,17 +300,17 @@
   }
 
   /*
-   * Product imagery is 12 shared placeholder shots on a cream ground. Rather
-   * than let them glow as light boxes on the panel, they read as dim
-   * monochrome reference prints recessed into an inset well.
+   * Product imagery is an illustrated rendering per SKU on a cream ground.
+   * A light contrast/brightness trim keeps it from glaring against the dark
+   * panel, without hiding the artwork the way a full grayscale wash would.
    */
   .spec-photo {
-    filter: grayscale(1) brightness(0.3) contrast(1.6);
-    opacity: 0.6;
+    filter: brightness(0.94) contrast(1.05);
+    opacity: 0.94;
   }
   .group:hover .spec-photo {
-    filter: grayscale(0.5) brightness(0.42) contrast(1.45);
-    opacity: 0.88;
+    filter: brightness(1) contrast(1.05);
+    opacity: 1;
   }
 
   /* Registration crosshairs at a well's corners — the plate-section tell. */
