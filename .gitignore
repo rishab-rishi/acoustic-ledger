@@ -1,9 +1,5 @@
 # Local tool state — not part of the product
-.claude/settings.local.json
-
-# Impeccable: keep design records (design.json, surfaces/), drop local caches
-.impeccable/config.local.json
-.impeccable/hook.cache.json
-.impeccable/questions/
-**/.impeccable/hook.cache.json
-**/.impeccable/review/
+.claude/
+.impeccable/
+**/.impeccable/
+CLAUDE-CODE-TASKS.md
