@@ -1,6 +1,7 @@
 # Security posture — Acoustic Ledger
 
-Companion to `CLAUDE-CODE-TASKS.md`. Two kinds of content live here:
+Security notes for this project, organized by hardening phase and task number.
+Two kinds of content live here:
 
 1. Things that are code and are done (with the commit that did them).
 2. Things that are **not code** — Vercel dashboard configuration, plan
@@ -94,9 +95,9 @@ under `(shop)` is deliberately **not** matched — Hobby's single rule has to
 be spent on the paths that cost money or CPU per request, and the catalog's
 real fix is caching (Task 5.2), not rate limiting.
 
-If the project ever moves to Pro (40 rules), split this into the full table
-from `CLAUDE-CODE-TASKS.md` §2.2 — sign-in, registration, capture, and
-demo-checkout each keyed and limited separately, plus a `/products*`
+If the project ever moves to Pro (40 rules), split this into separate rules —
+sign-in, registration, capture, and demo-checkout each keyed and limited
+separately, plus a `/products*`
 Challenge rule as defense in depth on top of the CDN caching.
 
 **Configured in Vercel dashboard → Project → Firewall → Configure → New
@@ -114,8 +115,8 @@ account or cart instead.
 - Uses `@vercel/firewall`'s `checkRateLimit()`, which needs a **matching
   rate-limit rule created in the dashboard** carrying the `@vercel/firewall`
   condition and the rate-limit ID used in code. Until that dashboard rule
-  exists, `checkRateLimit()` fails (network/config error) — and per the
-  brief's explicit instruction, a limiter that can't reach its backing rule
+  exists, `checkRateLimit()` fails (network/config error) — and by design,
+  a limiter that can't reach its backing rule
   **fails open**, so the app keeps working with no limiting rather than
   taking checkout offline. **This means Task 2.3 has no real effect until
   the dashboard rule below is created.**
